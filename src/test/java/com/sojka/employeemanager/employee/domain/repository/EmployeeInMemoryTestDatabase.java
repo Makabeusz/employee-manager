@@ -6,6 +6,7 @@ import com.sojka.employeemanager.employee.dto.SampleEmployee;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class EmployeeInMemoryTestDatabase implements SampleEmployee {
 
@@ -21,8 +22,12 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
         return List.copyOf(employees.values());
     }
 
-    public Employee findEmployee(int number) {
-        return employees.get(0);
+    public Optional<Employee> findEmployee(int number) {
+        try {
+            return Optional.of(employees.get(number));
+        } catch (NullPointerException e) {
+            return Optional.empty();
+        }
     }
 
 }
