@@ -48,19 +48,44 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
         // given
         final List<EmployeeDto> expectedEmployees = new ArrayList<>(Arrays.asList(firstEmployeeDto(), secondEmployeeDto(), thirdEmployeeDto()));
 
-        MvcResult result = mockMvc.perform(get("/employee/getAll"))
+        // when
+        MvcResult result = mockMvc.perform(get("/employees"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertThat(answerBodyOf(result))
+        // then
+        assertThat(listBodyOf(result))
                 .containsExactlyInAnyOrderElementsOf(expectedEmployees);
     }
 
-    private List<EmployeeDto> answerBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
+    @Test
+    void should_return_single_existing_employee() throws Exception {
+        // given
+        final EmployeeDto expectedEmployee = firstEmployeeDto();
+        final int EXISTING_EMPLOYEE = 0;
+
+        // when
+        MvcResult result = mockMvc.perform(get("/employees/" + EXISTING_EMPLOYEE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        assertThat(objectBodyOf(result))
+                .isEqualTo(expectedEmployee);
+    }
+
+
+    private List<EmployeeDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
         String content = mvcResult.getResponse().getContentAsString();
         ObjectReader reader = mapper.readerForListOf(EmployeeDto.class);
         return reader.readValue(content);
+    }
+
+    private EmployeeDto objectBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
+        String content = mvcResult.getResponse().getContentAsString();
+        return mapper.readValue(content, EmployeeDto.class);
     }
 
 
@@ -77,6 +102,12 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
                             .map(EmployeeMapper::mapToEmployeeDto)
                             .collect(Collectors.toList());
 
+                }
+
+                @Override
+                public EmployeeDto getEmployee(int number) {
+                    return EmployeeMapper.mapToEmployeeDto(
+                            repository.findEmployee(number));
                 }
             };
         }

@@ -21,4 +21,8 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
         return List.copyOf(employees.values());
     }
 
+    public Employee findEmployee(int number) {
+        return employees.get(0);
+    }
+
 }

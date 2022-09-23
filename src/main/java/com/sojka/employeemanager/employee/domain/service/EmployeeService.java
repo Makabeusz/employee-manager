@@ -7,4 +7,6 @@ import java.util.List;
 public interface EmployeeService {
 
     List<EmployeeDto> getAllEmployees();
+
+    EmployeeDto getEmployee(int number);
 }

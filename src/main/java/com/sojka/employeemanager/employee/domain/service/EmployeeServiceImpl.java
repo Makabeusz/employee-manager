@@ -1,15 +1,31 @@
 package com.sojka.employeemanager.employee.domain.service;
 
+import com.sojka.employeemanager.employee.domain.Employee;
+import com.sojka.employeemanager.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
+    private EmployeeRepository repository; //TODO: Autowire real repository
+
     @Override
     public List<EmployeeDto> getAllEmployees() {
-        return null;
+        List<Employee> employees = repository.findAllEmployees();
+        return employees.stream()
+                .map(EmployeeMapper::mapToEmployeeDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeDto getEmployee(int number) {
+        Employee employee = repository.findEmployee(number)
+                .orElseThrow(); // TODO: EmployeeNotFoundException
+        return EmployeeMapper.mapToEmployeeDto(employee);
     }
 }

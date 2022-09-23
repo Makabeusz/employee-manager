@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EmployeeRepositoryImpl implements EmployeeRepository {
@@ -20,6 +21,11 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public List<Employee> findAllEmployees() {
+        return null;
+    }
+
+    @Override
+    public Optional<Employee> findEmployee(int number) {
         return null;
     }
 }
