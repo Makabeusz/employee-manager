@@ -33,4 +33,5 @@ public interface SampleEmployee {
                 .birthDate("20.10.1971")
                 .build();
     }
+
 }
