@@ -9,5 +9,5 @@ public interface EmployeeRepository {
 
     List<Employee> findAllEmployees();
 
-    Optional<Employee> findEmployee(int number);
+    Optional<Employee> findEmployee(String number);
 }

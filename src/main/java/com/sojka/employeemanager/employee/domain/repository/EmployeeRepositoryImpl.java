@@ -25,7 +25,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public Optional<Employee> findEmployee(int number) {
+    public Optional<Employee> findEmployee(String number) {
         return null;
     }
 }

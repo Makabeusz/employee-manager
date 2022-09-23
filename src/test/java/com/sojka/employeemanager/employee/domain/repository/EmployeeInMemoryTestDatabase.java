@@ -22,9 +22,9 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
         return List.copyOf(employees.values());
     }
 
-    public Optional<Employee> findEmployee(int number) {
+    public Optional<Employee> findEmployee(String number) {
         try {
-            return Optional.of(employees.get(number));
+            return Optional.of(employees.get(Integer.parseInt(number)));
         } catch (NullPointerException e) {
             return Optional.empty();
         }

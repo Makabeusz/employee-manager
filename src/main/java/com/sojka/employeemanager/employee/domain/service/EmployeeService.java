@@ -8,5 +8,5 @@ public interface EmployeeService {
 
     List<EmployeeDto> getAllEmployees();
 
-    EmployeeDto getEmployee(int number);
+    EmployeeDto getEmployee(String number);
 }

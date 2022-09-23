@@ -2,6 +2,7 @@ package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto getEmployee(int number) {
+    public EmployeeDto getEmployee(String number) {
         Employee employee = repository.findEmployee(number)
-                .orElseThrow(); // TODO: EmployeeNotFoundException
+                .orElseThrow(() -> new EmployeeNotFoundException(number));
         return EmployeeMapper.mapToEmployeeDto(employee);
     }
 }

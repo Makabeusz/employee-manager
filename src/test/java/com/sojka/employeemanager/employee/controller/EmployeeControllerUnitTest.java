@@ -126,7 +126,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
                 }
 
                 @Override
-                public EmployeeDto getEmployee(int number) {
+                public EmployeeDto getEmployee(String number) {
                     Employee employee = repository.findEmployee(number)
                             .orElseThrow();
                     return EmployeeMapper.mapToEmployeeDto(employee);
