@@ -4,7 +4,7 @@ import com.sojka.employeemanager.employee.dto.EmployeeDto;
 
 public interface EmployeeMapper {
 
-    default Employee mapToEmployee(EmployeeDto employeeDto) {
+    static Employee mapToEmployee(EmployeeDto employeeDto) {
         return Employee.builder()
                 .firstName(employeeDto.getFirstName())
                 .secondName(employeeDto.getSecondName())
@@ -14,7 +14,7 @@ public interface EmployeeMapper {
                 .build();
     }
 
-    default EmployeeDto mapToEmployeeDto(Employee employee) {
+    static EmployeeDto mapToEmployeeDto(Employee employee) {
         return EmployeeDto.builder()
                 .firstName(employee.getFirstName())
                 .secondName(employee.getSecondName())

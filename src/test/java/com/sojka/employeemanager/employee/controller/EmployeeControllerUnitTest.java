@@ -1,6 +1,8 @@
 package com.sojka.employeemanager.employee.controller;
 
 import com.sojka.employeemanager.EmployeeManagerApplication;
+import com.sojka.employeemanager.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.employee.domain.repository.EmployeeInMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.service.EmployeeService;
 import com.sojka.employeemanager.employee.domain.service.EmployeeServiceImpl;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
@@ -12,15 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
@@ -33,7 +32,7 @@ class EmployeeControllerUnitTest {
     private EmployeeService service;
 
     @Test
-    void should_return_ok_code_for_list_of_all_employees() throws Exception {
+    void should_return_list_of_all_employees() throws Exception {
         mockMvc.perform(get("/employee/getAll"))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -42,12 +41,17 @@ class EmployeeControllerUnitTest {
     @Import(EmployeeManagerApplication.class)
     static class MockMvcConfig {
 
+        private final EmployeeInMemoryTestDatabase repository = new EmployeeInMemoryTestDatabase();
+
         @Bean
         EmployeeService employeeService() {
             return new EmployeeServiceImpl() {
                 @Override
                 public List<EmployeeDto> getAllEmployees() {
-                    return super.getAllEmployees();
+                    return repository.findAllEmployees().stream()
+                            .map(EmployeeMapper::mapToEmployeeDto)
+                            .collect(Collectors.toList());
+
                 }
             };
         }
