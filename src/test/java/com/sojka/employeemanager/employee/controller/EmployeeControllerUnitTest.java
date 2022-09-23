@@ -12,8 +12,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
 @ContextConfiguration(classes = EmployeeControllerUnitTest.MockMvcConfig.class)
@@ -25,8 +33,10 @@ class EmployeeControllerUnitTest {
     private EmployeeService service;
 
     @Test
-    void should_return_list_of_all_employees() {
-
+    void should_return_ok_code_for_list_of_all_employees() throws Exception {
+        mockMvc.perform(get("/employee/getAll"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Import(EmployeeManagerApplication.class)
