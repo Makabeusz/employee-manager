@@ -3,9 +3,11 @@ package com.sojka.employeemanager.employee.controller;
 import com.sojka.employeemanager.employee.domain.service.EmployeeService;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +28,11 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getEmployee(@PathVariable("id") String id) {
         return ResponseEntity.ok(service.getEmployee(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<EmployeeDto> addEmployee(EmployeeDto employeeDto) {
+        return new ResponseEntity<>(service.addEmployee(employeeDto), HttpStatus.CREATED);
     }
 
 }

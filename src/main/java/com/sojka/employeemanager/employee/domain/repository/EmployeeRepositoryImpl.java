@@ -26,6 +26,16 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public Optional<Employee> findEmployee(String number) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Employee save(Employee employee) {
         return null;
+    }
+
+    @Override
+    public Optional<Employee> findEmployeeByPersonalId(String personalId) {
+        return Optional.empty();
     }
 }
