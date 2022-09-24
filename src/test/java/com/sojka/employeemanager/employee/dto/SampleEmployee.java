@@ -6,7 +6,7 @@ public interface SampleEmployee {
 
     default Employee firstEmployee() {
         return Employee.builder()
-                .id(0)
+                .id("0")
                 .firstName("Patrick")
                 .secondName("Wayne")
                 .lastName("Swayze")
@@ -17,7 +17,7 @@ public interface SampleEmployee {
 
     default Employee secondEmployee() {
         return Employee.builder()
-                .id(0)
+                .id("0")
                 .firstName("John")
                 .secondName(null)
                 .lastName("Wayne")
@@ -28,7 +28,7 @@ public interface SampleEmployee {
 
     default Employee thirdEmployee() {
         return Employee.builder()
-                .id(0)
+                .id("0")
                 .firstName("Calvin")
                 .secondName("Cordozar")
                 .lastName("Broadus")

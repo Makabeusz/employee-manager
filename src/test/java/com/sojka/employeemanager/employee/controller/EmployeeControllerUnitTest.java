@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.employee.domain.exceptions.EmployeeControllerErrorHandler;
+import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeInMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.domain.service.EmployeeService;
@@ -15,6 +17,7 @@ import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,8 +46,8 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
     private ObjectMapper mapper;
     @Autowired
     private MockMvc mockMvc;
-//    @MockBean
-//    private EmployeeService service;
+    @MockBean
+    private EmployeeService service;
 
     @Test
     void should_return_list_of_all_employees() throws Exception {
@@ -65,7 +69,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
     void should_return_single_existing_employee() throws Exception {
         // given
         final EmployeeDto expectedEmployee = firstEmployeeDto();
-        final int EXISTING_ID = 0;
+        final String EXISTING_ID = "0";
 
         // when
         MvcResult result = mockMvc.perform(get("/employees/" + EXISTING_ID))
@@ -81,10 +85,11 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
     @Test
     void should_throw_EmployeeNotFoundException_for_non_existing_employee() throws Exception {
         // given
-        final EmployeeDto notExistingEmployee = EmployeeDto.builder().firstName("I don't even exist").build();
-        final int NOT_EXISTING_ID = 100;
+        final String NOT_EXISTING_ID = "100";
 
         // when
+        when(service.getEmployee(NOT_EXISTING_ID))
+                .thenThrow(new EmployeeNotFoundException(NOT_EXISTING_ID));
         MvcResult result = mockMvc.perform(get("/employees/" + NOT_EXISTING_ID))
                 .andDo(print())
                 .andExpect(notFoundStatus())
@@ -92,7 +97,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
 
         // then
         assertThat(objectBodyOf(result)).describedAs(
-                "Employee with id " + NOT_EXISTING_ID + " do not exist.");
+                "Employee with id 100 do not exist.");
     }
 
     private ResultMatcher notFoundStatus() {
@@ -128,7 +133,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
                 @Override
                 public EmployeeDto getEmployee(String number) {
                     Employee employee = repository.findEmployee(number)
-                            .orElseThrow();
+                            .orElseThrow(() -> new EmployeeNotFoundException(number));
                     return EmployeeMapper.mapToEmployeeDto(employee);
                 }
             };
@@ -142,6 +147,11 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
         @Bean
         EmployeeRepository employeeRepository() {
             return mock(EmployeeRepository.class);
+        }
+
+        @Bean
+        EmployeeControllerErrorHandler employeeControllerErrorHandler() {
+            return new EmployeeControllerErrorHandler();
         }
     }
 }
