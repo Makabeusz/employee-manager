@@ -2,6 +2,7 @@ package com.sojka.employeemanager.employee.domain.repository;
 
 import com.sojka.employeemanager.employee.domain.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -21,21 +22,40 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public List<Employee> findAllEmployees() {
-        return null;
+        String sql = "SELECT * FROM employees";
+        return jdbcTemplate.query(sql,
+                BeanPropertyRowMapper.newInstance(Employee.class));
     }
 
     @Override
     public Optional<Employee> findEmployee(String number) {
-        return Optional.empty();
+        String sql = "SELECT * FROM employees\n" +
+                "WHERE id=?";
+        Employee employee = jdbcTemplate.queryForObject(sql,
+                BeanPropertyRowMapper.newInstance(Employee.class),
+                number);
+        return Optional.ofNullable(employee);
     }
 
     @Override
     public Employee save(Employee employee) {
-        return null;
+        String sql = "INSERT INTO employees (first_name, second_name, last_name, birth_date, personal_id)\n" +
+                "VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, employee.getFirstName(),
+                employee.getSecondName(),
+                employee.getLastName(),
+                employee.getBirthDate(),
+                employee.getPersonalId());
+        return findEmployeeByPersonalId(employee.getPersonalId()).get();
     }
 
     @Override
     public Optional<Employee> findEmployeeByPersonalId(String personalId) {
-        return Optional.empty();
+        String sql = "SELECT * FROM employees\n" +
+                "WHERE personal_id=?";
+        Employee employee = jdbcTemplate.queryForObject(sql,
+                BeanPropertyRowMapper.newInstance(Employee.class),
+                personalId);
+        return Optional.ofNullable(employee);
     }
 }
