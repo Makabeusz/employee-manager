@@ -29,7 +29,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto getEmployee(String number) {
-        Employee employee = repository.findEmployee(number)
+        Employee employee = repository.findEmployeeById(number)
                 .orElseThrow(() -> new EmployeeNotFoundException(number));
         return EmployeeMapper.mapToEmployeeDto(employee);
     }

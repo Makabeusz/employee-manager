@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeInMemoryTestDatabase;
@@ -14,12 +15,14 @@ import com.sojka.employeemanager.employee.domain.service.EmployeeServiceImpl;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployee;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -34,8 +37,10 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
@@ -62,7 +67,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
 
         // then
         assertThat(listBodyOf(result))
-                .containsExactlyInAnyOrderElementsOf(expectedEmployees);
+                .containsAll(expectedEmployees);
     }
 
     @Test
@@ -100,6 +105,42 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
                 "Employee with id 100 do not exist.");
     }
 
+    @Test
+    void should_correctly_save_new_employee() throws Exception {
+        mockMvc.perform(post("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(newEmployeeDto())))
+                .andDo(print())
+                .andExpect(createdStatus())
+                .andExpect(containsNewEmployee());
+    }
+
+    @Test
+    void should_handle_DuplicateEmployeeException_through_handler() throws Exception {
+        mockMvc.perform(post("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(firstEmployeeDto())))
+                .andDo(print())
+                .andExpect(conflictStatus())
+                .andExpect(duplicateEmployeeMessage());
+    }
+
+    private ResultMatcher duplicateEmployeeMessage() {
+        return content().string(Matchers.containsString("Such employee already exists"));
+    }
+
+    private ResultMatcher containsNewEmployee() {
+        return content().string("{\"firstName\":\"Antoine\",\"secondName\":null,\"lastName\":\"Rosaille\",\"birthDate\":\"1995-01-12\",\"personalId\":\"95011286532\"}");
+    }
+
+    private ResultMatcher conflictStatus() {
+        return status().is(HttpStatus.CONFLICT.value());
+    }
+
+    private ResultMatcher createdStatus() {
+        return status().is(HttpStatus.CREATED.value());
+    }
+
     private ResultMatcher notFoundStatus() {
         return status().is(HttpStatus.NOT_FOUND.value());
     }
@@ -135,6 +176,15 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
                     Employee employee = repository.findEmployee(number)
                             .orElseThrow(() -> new EmployeeNotFoundException(number));
                     return EmployeeMapper.mapToEmployeeDto(employee);
+                }
+
+                @Override
+                public EmployeeDto addEmployee(EmployeeDto employeeDto) {
+                    if (repository.exists(employeeDto.getPersonalId()))
+                        throw new DuplicateEmployeeException(employeeDto.getFirstName());
+                    Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
+                    return EmployeeMapper.mapToEmployeeDto(
+                            repository.saveEmployee(employee));
                 }
             };
         }

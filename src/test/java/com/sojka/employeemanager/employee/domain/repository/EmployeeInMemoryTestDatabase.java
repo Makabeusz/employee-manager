@@ -23,11 +23,17 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
     }
 
     public Optional<Employee> findEmployee(String number) {
-        try {
-            return Optional.of(employees.get(Integer.parseInt(number)));
-        } catch (NullPointerException e) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(employees.get(Integer.parseInt(number)));
+    }
+
+    public Employee saveEmployee(Employee employee) {
+        employees.put(3, employee);
+        return employees.get(3);
+    }
+
+    public boolean exists(String personalId) {
+        return employees.values().stream()
+                .anyMatch(employee -> employee.getPersonalId().equals(personalId));
     }
 
 }

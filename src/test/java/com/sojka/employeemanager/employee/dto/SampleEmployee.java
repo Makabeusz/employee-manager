@@ -37,4 +37,15 @@ public interface SampleEmployee {
                 .build();
     }
 
+    default Employee newEmployee() {
+        return Employee.builder()
+                .id("4")
+                .firstName("Antoine")
+                .secondName(null)
+                .lastName("Rosaille")
+                .birthDate("1995-01-12")
+                .personalId("95011286532")
+                .build();
+    }
+
 }

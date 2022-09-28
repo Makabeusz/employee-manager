@@ -16,4 +16,11 @@ public class EmployeeControllerErrorHandler {
         log.error(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(DuplicateEmployeeException.class)
+    ResponseEntity<EmployeeErrorResponse> handleDuplicateEmployeeException(DuplicateEmployeeException e) {
+        EmployeeErrorResponse response = new EmployeeErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
+        log.error(e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
 }

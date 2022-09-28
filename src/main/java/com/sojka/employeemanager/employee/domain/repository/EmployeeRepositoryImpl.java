@@ -28,7 +28,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public Optional<Employee> findEmployee(String number) {
+    public Optional<Employee> findEmployeeById(String number) {
         String sql = "SELECT * FROM employees\n" +
                 "WHERE id=?";
         Employee employee = jdbcTemplate.queryForObject(sql,
