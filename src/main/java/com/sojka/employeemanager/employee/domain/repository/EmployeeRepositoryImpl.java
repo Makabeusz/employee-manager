@@ -53,9 +53,9 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     public Optional<Employee> findEmployeeByPersonalId(String personalId) {
         String sql = "SELECT * FROM employees\n" +
                 "WHERE personal_id=?";
-        Employee employee = jdbcTemplate.queryForObject(sql,
+        List<Employee> employee = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),
                 personalId);
-        return Optional.ofNullable(employee);
+        return employee.isEmpty() ? Optional.empty() : Optional.of(employee.get(0));
     }
 }

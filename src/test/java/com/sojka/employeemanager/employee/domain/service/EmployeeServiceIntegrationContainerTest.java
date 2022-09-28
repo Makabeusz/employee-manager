@@ -1,5 +1,8 @@
 package com.sojka.employeemanager.employee.domain.service;
 
+import com.sojka.employeemanager.employee.domain.Employee;
+import com.sojka.employeemanager.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
 import org.junit.jupiter.api.Test;
@@ -10,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
@@ -21,6 +25,8 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
 
     @Autowired
     private EmployeeService service;
+    @Autowired
+    private EmployeeRepository repository;
 
     @Test
     void should_return_all_employees() {
@@ -60,5 +66,20 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
         assertThat(exception).isInstanceOf(DataAccessException.class);
     }
 
+    @Test
+    void should_save_new_employee_and_then_query_him() {
+        // given
+        EmployeeDto newEmployee = newEmployeeDto();
+        assertThat(repository.findEmployeeByPersonalId(newEmployee.getPersonalId()))
+                .isEmpty();
 
+        // when
+        EmployeeDto saved = service.addEmployee(newEmployee);
+        Optional<Employee> actual = repository.findEmployeeByPersonalId(saved.getPersonalId());
+
+        // then
+        assertThat(EmployeeMapper.mapToEmployeeDto(actual.get())).isEqualTo(saved);
+    }
+
+    
 }
