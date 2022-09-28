@@ -11,29 +11,29 @@ public interface SampleEmployee {
                 .secondName("Wayne")
                 .lastName("Swayze")
                 .birthDate("12.08.1952")
-                .personalId("520812123456")
+                .personalId("52081212346")
                 .build();
     }
 
     default Employee secondEmployee() {
         return Employee.builder()
-                .id("0")
+                .id("1")
                 .firstName("John")
                 .secondName(null)
                 .lastName("Wayne")
                 .birthDate("26.05.1907")
-                .personalId("070526123456")
+                .personalId("07052612356")
                 .build();
     }
 
     default Employee thirdEmployee() {
         return Employee.builder()
-                .id("0")
+                .id("2")
                 .firstName("Calvin")
                 .secondName("Cordozar")
                 .lastName("Broadus")
                 .birthDate("20.10.1971")
-                .personalId("711020123456")
+                .personalId("71102012346")
                 .build();
     }
 

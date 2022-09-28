@@ -6,6 +6,7 @@ import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeExc
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private EmployeeRepository repository; //TODO: Autowire real repository
+    private EmployeeRepository repository;
 
     @Override
     public List<EmployeeDto> getAllEmployees() {

@@ -122,7 +122,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
 
         @Bean
         EmployeeService employeeService() {
-            return new EmployeeServiceImpl() {
+            return new EmployeeServiceImpl(employeeRepository()) {
                 @Override
                 public List<EmployeeDto> getAllEmployees() {
                     return repository.findAllEmployees().stream()
