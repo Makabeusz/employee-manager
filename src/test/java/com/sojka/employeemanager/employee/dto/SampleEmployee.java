@@ -6,33 +6,33 @@ public interface SampleEmployee {
 
     default Employee firstEmployee() {
         return Employee.builder()
-                .id("0")
+                .id("1")
                 .firstName("Patrick")
                 .secondName("Wayne")
                 .lastName("Swayze")
-                .birthDate("12.08.1952")
+                .birthDate("1952-08-12")
                 .personalId("52081212346")
                 .build();
     }
 
     default Employee secondEmployee() {
         return Employee.builder()
-                .id("1")
+                .id("2")
                 .firstName("John")
                 .secondName(null)
                 .lastName("Wayne")
-                .birthDate("26.05.1907")
+                .birthDate("1907-05-26")
                 .personalId("07052612356")
                 .build();
     }
 
     default Employee thirdEmployee() {
         return Employee.builder()
-                .id("2")
+                .id("3")
                 .firstName("Calvin")
                 .secondName("Cordozar")
                 .lastName("Broadus")
-                .birthDate("20.10.1971")
+                .birthDate("1971-10-20")
                 .personalId("71102012346")
                 .build();
     }
