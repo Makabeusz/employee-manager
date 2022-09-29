@@ -1,12 +1,13 @@
 package com.sojka.employeemanager.employee.domain.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository repository;
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    public EmployeeServiceImpl(EmployeeRepository repository) {
+        this.repository = repository;
+    }
+
+
 
     @Override
     public List<EmployeeDto> getAllEmployees() {
@@ -52,8 +61,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employees = employeeDtos.stream()
                 .map(EmployeeMapper::mapToEmployee)
                 .collect(Collectors.toList());
-        List<Employee> saved = repository.saveAll(employees);
-        return saved.stream()
+        return repository.saveAll(employees).stream()
                 .map(EmployeeMapper::mapToEmployeeDto)
                 .collect(Collectors.toList());
     }

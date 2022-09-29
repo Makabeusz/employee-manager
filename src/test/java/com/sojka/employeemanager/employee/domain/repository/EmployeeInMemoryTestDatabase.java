@@ -1,6 +1,7 @@
 package com.sojka.employeemanager.employee.domain.repository;
 
 import com.sojka.employeemanager.employee.domain.Employee;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.employee.dto.SampleEmployee;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
 
     public Employee saveEmployee(Employee employee) {
         employees.put(employees.size(), employee);
-        return employees.get(employees.size());
+        return employees.get(employees.size()-1);
     }
 
     public boolean exists(String personalId) {
@@ -40,6 +41,12 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
     public List<Employee> saveAllEmployees(List<Employee> employees) {
         List<Employee> saved = new ArrayList<>();
         for (Employee employee : employees) {
+            if (this.employees.containsValue(employee)) {
+                Employee duplicate = this.employees.values().stream()
+                        .filter(e -> e.getPersonalId().equals(employee.getPersonalId()))
+                        .findFirst().get();
+                throw new DuplicateEmployeeException(duplicate.toString());
+            }
             this.employees.put(this.employees.size(), employee);
             saved.add(employee);
         }

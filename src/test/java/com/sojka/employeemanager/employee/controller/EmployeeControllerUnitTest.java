@@ -113,7 +113,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
     }
 
     @Test
-    void should_handle_DuplicateEmployeeException_through_handler() throws Exception {
+    void should_handle_DuplicateEmployeeException_on_duplicate_saving_attempt() throws Exception {
         mockMvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(firstEmployeeDto())))
@@ -133,6 +133,20 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
 
         assertThat(listBodyOf(result))
                 .containsExactlyInAnyOrderElementsOf(newEmployeesDto());
+    }
+
+    @Test
+    void should_throw_DuplicateEmployeeException_during_save_attempt_of_list_containing_a_duplicate() throws Exception {
+        mockMvc.perform(post("/employees/list")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newEmployeesAndOneDuplicate()))
+                .andDo(print())
+                .andExpect(conflictStatus())
+                .andExpect(duplicateEmployeeMessage());
+    }
+
+    private String newEmployeesAndOneDuplicate() throws JsonProcessingException {
+        return mapper.writeValueAsString(List.of(john(), hank(), firstEmployee()));
     }
 
     private List<EmployeeDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -171,7 +185,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 @Override
                 public EmployeeDto addEmployee(EmployeeDto employeeDto) {
                     if (repository.exists(employeeDto.getPersonalId()))
-                        throw new DuplicateEmployeeException(employeeDto.getFirstName());
+                        throw new DuplicateEmployeeException(employeeDto.toString());
                     Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
                     return EmployeeMapper.mapToEmployeeDto(
                             repository.saveEmployee(employee));
