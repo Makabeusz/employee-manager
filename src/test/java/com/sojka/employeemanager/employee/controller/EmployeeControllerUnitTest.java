@@ -3,6 +3,7 @@ package com.sojka.employeemanager.employee.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
@@ -15,18 +16,15 @@ import com.sojka.employeemanager.employee.domain.service.EmployeeServiceImpl;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployee;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -40,12 +38,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
 @ContextConfiguration(classes = EmployeeControllerUnitTest.MockMvcConfig.class)
-class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
+class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, ResultMatcherHelper {
 
     @Autowired
     private ObjectMapper mapper;
@@ -123,26 +120,6 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
                 .andDo(print())
                 .andExpect(conflictStatus())
                 .andExpect(duplicateEmployeeMessage());
-    }
-
-    private ResultMatcher duplicateEmployeeMessage() {
-        return content().string(Matchers.containsString("Such employee already exists"));
-    }
-
-    private ResultMatcher containsNewEmployee() throws JsonProcessingException {
-        return content().string(Matchers.containsString(mapper.writeValueAsString(newEmployeeDto())));
-    }
-
-    private ResultMatcher conflictStatus() {
-        return status().is(HttpStatus.CONFLICT.value());
-    }
-
-    private ResultMatcher createdStatus() {
-        return status().is(HttpStatus.CREATED.value());
-    }
-
-    private ResultMatcher notFoundStatus() {
-        return status().is(HttpStatus.NOT_FOUND.value());
     }
 
     private List<EmployeeDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
