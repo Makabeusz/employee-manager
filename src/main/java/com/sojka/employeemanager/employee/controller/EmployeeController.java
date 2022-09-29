@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -32,12 +33,12 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody EmployeeDto employee) {
+    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody @Valid EmployeeDto employee) {
         return new ResponseEntity<>(service.addEmployee(employee), HttpStatus.CREATED);
     }
 
     @PostMapping("/list")
-    public ResponseEntity<List<EmployeeDto>> addEmployees(@RequestBody List<EmployeeDto> employees) {
+    public ResponseEntity<List<EmployeeDto>> addEmployees(@RequestBody @Valid List<EmployeeDto> employees) {
         return new ResponseEntity<>(service.addEmployees(employees), HttpStatus.CREATED);
     }
 
