@@ -72,12 +72,13 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public boolean exists(Employee employee) {
-        String sql = "SELECT CASE WHEN EXISTS (\n" +
-                "    SELECT *\n" +
-                "    FROM employees\n" +
-                "    WHERE personal_id = ?\n" +
-                ")\n" +
-                "THEN 1 ELSE 0 END AS BIT";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, BeanPropertyRowMapper.newInstance(Boolean.class)));
+        String sql = "SELECT CASE WHEN EXISTS (" +
+                "SELECT * FROM employees\n" +
+                "WHERE personal_id = ?)\n" +
+                "THEN true ELSE false END AS boolean";
+        int result = jdbcTemplate.queryForObject(sql,
+                (rs, rowNum) -> rs.getRow(),
+                employee.getPersonalId());
+        return result == 1;
     }
 }

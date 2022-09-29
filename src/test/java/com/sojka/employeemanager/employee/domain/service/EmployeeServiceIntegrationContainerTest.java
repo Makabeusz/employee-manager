@@ -10,15 +10,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 @Testcontainers
 @SpringBootTest
@@ -84,14 +88,48 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
     }
 
     @Test
-    void should_throw_DuplicateEmployeeException_for_duplicate() {
+    void should_throw_DuplicateEmployeeException_for_duplicate_saving_attempt() {
         // given
         EmployeeDto existing = firstEmployeeDto();
 
-        // when
+        // when / then
         assertThatThrownBy(() -> service.addEmployee(existing))
                 .hasMessageContaining("Such employee already exists")
                 .isInstanceOf(DuplicateEmployeeException.class);
     }
 
+    @Test
+    void should_throw_DuplicateEmployeeException_and_refused_to_save_any_employees_if_duplicate_is_within() {
+        // given
+        List<EmployeeDto> primaryList = repository.findAllEmployees().stream()
+                .map(EmployeeMapper::mapToEmployeeDto)
+                .collect(Collectors.toList());
+        List<EmployeeDto> newWithOneDuplicate = new ArrayList<>(List.of(thirdEmployeeDto()));
+        newWithOneDuplicate.addAll(newEmployeesDto());
+
+        // when
+        Throwable exception = catchThrowable(() -> service.addEmployees(newWithOneDuplicate));
+
+        // then
+        assertThat(exception).isInstanceOf(DuplicateKeyException.class);
+        assertThat(service.getAllEmployees())
+                .containsExactlyInAnyOrderElementsOf(primaryList);
+    }
+
+    @Test
+    void should_correctly_save_employees_and_then_query_for_them() {
+        // given
+        List<EmployeeDto> primaryList = repository.findAllEmployees().stream()
+                .map(EmployeeMapper::mapToEmployeeDto)
+                .collect(Collectors.toList());
+        List<EmployeeDto> newEmployees = new ArrayList<>(newEmployeesDto());
+
+        // when
+        List<EmployeeDto> saved = service.addEmployees(newEmployees);
+
+        // then
+        assertThat(service.getAllEmployees())
+                .containsAll(primaryList)
+                .containsAll(saved);
+    }
 }
