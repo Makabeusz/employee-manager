@@ -2,6 +2,8 @@ package com.sojka.employeemanager.employee.dto;
 
 import com.sojka.employeemanager.employee.domain.Employee;
 
+import java.util.List;
+
 public interface SampleEmployee {
 
     default Employee firstEmployee() {
@@ -45,6 +47,43 @@ public interface SampleEmployee {
                 .lastName("Rosaille")
                 .birthDate("1995-01-12")
                 .personalId("95011286532")
+                .build();
+    }
+
+    default List<Employee> newEmployees() {
+        return List.of(john(), hank(), luize());
+    }
+
+    default Employee john() {
+        return Employee.builder()
+                .id("5")
+                .firstName("John")
+                .secondName("George")
+                .lastName("Wick")
+                .birthDate("1995-06-25")
+                .personalId("95062506875")
+                .build();
+    }
+
+    default Employee hank() {
+        return Employee.builder()
+                .id("6")
+                .firstName("Hank")
+                .secondName(null)
+                .lastName("Moore")
+                .birthDate("1985-01-18")
+                .personalId("85012465783")
+                .build();
+    }
+
+    default Employee luize() {
+        return Employee.builder()
+                .id("7")
+                .firstName("Luize")
+                .secondName(null)
+                .lastName("Jacquline")
+                .birthDate("1988-08-16")
+                .personalId("88061278314")
                 .build();
     }
 

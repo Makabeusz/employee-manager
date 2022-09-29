@@ -3,6 +3,7 @@ package com.sojka.employeemanager.employee.domain.repository;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.dto.SampleEmployee;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,8 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
     }
 
     public Employee saveEmployee(Employee employee) {
-        employees.put(3, employee);
-        return employees.get(3);
+        employees.put(employees.size(), employee);
+        return employees.get(employees.size());
     }
 
     public boolean exists(String personalId) {
@@ -36,4 +37,12 @@ public class EmployeeInMemoryTestDatabase implements SampleEmployee {
                 .anyMatch(employee -> employee.getPersonalId().equals(personalId));
     }
 
+    public List<Employee> saveAllEmployees(List<Employee> employees) {
+        List<Employee> saved = new ArrayList<>();
+        for (Employee employee : employees) {
+            this.employees.put(this.employees.size(), employee);
+            saved.add(employee);
+        }
+        return saved;
+    }
 }

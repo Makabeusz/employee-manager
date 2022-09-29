@@ -2,6 +2,8 @@ package com.sojka.employeemanager.employee.dto;
 
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
 
+import java.util.List;
+
 public interface SampleEmployeeDto extends SampleEmployee {
 
     default EmployeeDto firstEmployeeDto() {
@@ -18,5 +20,11 @@ public interface SampleEmployeeDto extends SampleEmployee {
 
     default EmployeeDto newEmployeeDto() {
         return EmployeeMapper.mapToEmployeeDto(newEmployee());
+    }
+
+    default List<EmployeeDto> newEmployeesDto() {
+        return List.of(EmployeeMapper.mapToEmployeeDto(john()),
+                EmployeeMapper.mapToEmployeeDto(hank()),
+                EmployeeMapper.mapToEmployeeDto(luize()));
     }
 }

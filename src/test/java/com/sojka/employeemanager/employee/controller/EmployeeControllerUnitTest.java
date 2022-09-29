@@ -122,6 +122,19 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 .andExpect(duplicateEmployeeMessage());
     }
 
+    @Test
+    void should_correctly_save_all_employees() throws Exception {
+        MvcResult result = mockMvc.perform(post("/employees/list")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(newEmployeesDto())))
+                .andDo(print())
+                .andExpect(createdStatus())
+                .andReturn();
+
+        assertThat(listBodyOf(result))
+                .containsExactlyInAnyOrderElementsOf(newEmployeesDto());
+    }
+
     private List<EmployeeDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
         String content = mvcResult.getResponse().getContentAsString();
         ObjectReader reader = mapper.readerForListOf(EmployeeDto.class);
@@ -162,6 +175,16 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                     Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
                     return EmployeeMapper.mapToEmployeeDto(
                             repository.saveEmployee(employee));
+                }
+
+                @Override
+                public List<EmployeeDto> addEmployees(List<EmployeeDto> employeeDtos) {
+                    List<Employee> employees = employeeDtos.stream()
+                            .map(EmployeeMapper::mapToEmployee)
+                            .collect(Collectors.toList());
+                    return repository.saveAllEmployees(employees).stream()
+                            .map(EmployeeMapper::mapToEmployeeDto)
+                            .collect(Collectors.toList());
                 }
             };
         }
