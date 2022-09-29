@@ -2,6 +2,7 @@ package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 
 @Testcontainers
@@ -81,5 +83,15 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
         assertThat(EmployeeMapper.mapToEmployeeDto(actual.get())).isEqualTo(saved);
     }
 
-    
+    @Test
+    void should_throw_DuplicateEmployeeException_for_duplicate() {
+        // given
+        EmployeeDto existing = firstEmployeeDto();
+
+        // when
+        assertThatThrownBy(() -> service.addEmployee(existing))
+                .hasMessageContaining("Such employee already exists")
+                .isInstanceOf(DuplicateEmployeeException.class);
+    }
+
 }
