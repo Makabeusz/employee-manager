@@ -129,8 +129,8 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto {
         return content().string(Matchers.containsString("Such employee already exists"));
     }
 
-    private ResultMatcher containsNewEmployee() {
-        return content().string("{\"firstName\":\"Antoine\",\"secondName\":null,\"lastName\":\"Rosaille\",\"birthDate\":\"1995-01-12\",\"personalId\":\"95011286532\"}");
+    private ResultMatcher containsNewEmployee() throws JsonProcessingException {
+        return content().string(Matchers.containsString(mapper.writeValueAsString(newEmployeeDto())));
     }
 
     private ResultMatcher conflictStatus() {

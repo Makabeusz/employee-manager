@@ -36,4 +36,9 @@ public class EmployeeController {
         return new ResponseEntity<>(service.addEmployee(employee), HttpStatus.CREATED);
     }
 
+    @PostMapping("/list")
+    public ResponseEntity<List<EmployeeDto>> addEmployees(@RequestBody List<EmployeeDto> employees) {
+        return new ResponseEntity<>(service.addEmployees(employees), HttpStatus.CREATED);
+    }
+
 }

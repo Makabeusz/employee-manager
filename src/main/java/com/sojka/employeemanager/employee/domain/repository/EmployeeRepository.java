@@ -14,4 +14,8 @@ public interface EmployeeRepository {
     Employee save(Employee employee);
 
     Optional<Employee> findEmployeeByPersonalId(String personalId);
+
+    List<Employee> saveAll(List<Employee> employees);
+
+    boolean exists(Employee employee);
 }

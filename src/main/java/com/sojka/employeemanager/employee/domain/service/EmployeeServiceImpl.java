@@ -46,4 +46,15 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new DuplicateEmployeeException(duplicate.toString());
         }
     }
+
+    @Override
+    public List<EmployeeDto> addEmployees(List<EmployeeDto> employeeDtos) {
+        List<Employee> employees = employeeDtos.stream()
+                .map(EmployeeMapper::mapToEmployee)
+                .collect(Collectors.toList());
+        List<Employee> saved = repository.saveAll(employees);
+        return saved.stream()
+                .map(EmployeeMapper::mapToEmployeeDto)
+                .collect(Collectors.toList());
+    }
 }

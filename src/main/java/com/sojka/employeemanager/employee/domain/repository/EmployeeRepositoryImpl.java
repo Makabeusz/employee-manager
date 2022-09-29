@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class EmployeeRepositoryImpl implements EmployeeRepository {
@@ -30,7 +31,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     @Override
     public Optional<Employee> findEmployeeById(String number) {
         String sql = "SELECT * FROM employees\n" +
-                "WHERE id=?";
+                "WHERE id = ?";
         Employee employee = jdbcTemplate.queryForObject(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),
                 number);
@@ -52,10 +53,31 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     @Override
     public Optional<Employee> findEmployeeByPersonalId(String personalId) {
         String sql = "SELECT * FROM employees\n" +
-                "WHERE personal_id=?";
+                "WHERE personal_id = ?";
         List<Employee> employee = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),
                 personalId);
         return employee.isEmpty() ? Optional.empty() : Optional.of(employee.get(0));
+    }
+
+    @Override
+    public List<Employee> saveAll(List<Employee> employees) {
+        List<Employee> saved = employees.stream()
+                .filter(this::exists)
+                .collect(Collectors.toList());
+        saved
+                .forEach(this::save);
+        return saved;
+    }
+
+    @Override
+    public boolean exists(Employee employee) {
+        String sql = "SELECT CASE WHEN EXISTS (\n" +
+                "    SELECT *\n" +
+                "    FROM employees\n" +
+                "    WHERE personal_id = ?\n" +
+                ")\n" +
+                "THEN 1 ELSE 0 END AS BIT";
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, BeanPropertyRowMapper.newInstance(Boolean.class)));
     }
 }
