@@ -29,4 +29,8 @@ public interface ResultMatcherHelper extends SampleEmployeeDto{
     default ResultMatcher notFoundStatus() {
         return status().is(HttpStatus.NOT_FOUND.value());
     }
+
+    default ResultMatcher badRequestStatus() {
+        return status().is(HttpStatus.BAD_REQUEST.value());
+    }
 }

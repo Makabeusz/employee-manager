@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -23,5 +24,13 @@ public class EmployeeControllerErrorHandler {
         EmployeeErrorResponse response = new EmployeeErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
         log.error(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    ResponseEntity<EmployeeErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
+        String message = e.getFieldError().getDefaultMessage();
+        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.BAD_REQUEST);
+        log.warn(message);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

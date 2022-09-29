@@ -10,15 +10,16 @@ import javax.validation.constraints.Pattern;
 @Builder
 public class EmployeeDto {
 
-    @NotBlank
+    @NotBlank(message = "{employee.firstname}")
     private String firstName;
     private String secondName;
-    @NotBlank
+    @NotBlank(message = "{employee.lastname}")
     private String lastName;
-    @NotBlank
-    @Pattern(regexp = "(19|20)\\d{2}-((0[1-9])|(1[0-2]))-(([0-2]\\d)|(30|31))") // yyyy-mm-dd
+    @NotBlank(message = "{employee.birthdate}")
+    @Pattern(regexp = "(19|20)\\d{2}-((0[1-9])|(1[0-2]))-(([0-2]\\d)|(30|31))",
+            message = "{employee.birthdate}")
     private String birthDate;
-    @NotBlank
+    @NotBlank(message = "{employee.personalid}")
     private String personalId;
 
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
+import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.domain.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
@@ -16,11 +17,16 @@ import com.sojka.employeemanager.employee.domain.service.EmployeeServiceImpl;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployee;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,13 +37,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
@@ -145,6 +154,44 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 .andExpect(duplicateEmployeeMessage());
     }
 
+    @ParameterizedTest
+    @MethodSource("malformedEmployees")
+    void employeeDto_validation_check(String argument, String validationMessage) throws Exception {
+        // given
+        String malformedEmployee = argument;
+
+        // when
+        mockMvc.perform(post("/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(malformedEmployee))
+                .andDo(print())
+                .andExpect(badRequestStatus())
+                .andExpect(content().string(Matchers.containsString(validationMessage)));
+    }
+
+    private static Stream<Arguments> malformedEmployees() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Employee wellConstructedEmployee = Employee.builder()
+                .firstName("name")
+                .secondName("second name")
+                .lastName("lastname")
+                .birthDate("1995-06-20")
+                .personalId("12345612345")
+                .build();
+        EmployeeDto wrongDate = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
+        EmployeeDto noName = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
+        EmployeeDto noSurname = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
+        EmployeeDto noPersonalId = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
+        wrongDate.setBirthDate("2000-13-23");
+        noName.setFirstName("");
+        noSurname.setLastName("");
+        noPersonalId.setPersonalId("");
+        return Stream.of(arguments(mapper.writeValueAsString(wrongDate), "Employee birthdate should be given in correct format (yyyy-mm-dd)."),
+                arguments(mapper.writeValueAsString(noName), "Employee firstname is required."),
+                arguments(mapper.writeValueAsString(noSurname), "Employee lastname is required."),
+                arguments(mapper.writeValueAsString(noPersonalId), "Employee personal id is required."));
+    }
+
     private String newEmployeesAndOneDuplicate() throws JsonProcessingException {
         return mapper.writeValueAsString(List.of(john(), hank(), firstEmployee()));
     }
@@ -160,7 +207,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
         return mapper.readValue(content, EmployeeDto.class);
     }
 
-
+    @Import(MessageSourceConfig.class)
     static class MockMvcConfig {
 
         private final EmployeeInMemoryTestDatabase repository = new EmployeeInMemoryTestDatabase();
@@ -217,5 +264,6 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
         EmployeeControllerErrorHandler employeeControllerErrorHandler() {
             return new EmployeeControllerErrorHandler();
         }
+
     }
 }
