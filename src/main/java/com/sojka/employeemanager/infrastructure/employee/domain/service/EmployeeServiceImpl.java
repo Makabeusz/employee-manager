@@ -1,12 +1,11 @@
-package com.sojka.employeemanager.employee.domain.service;
+package com.sojka.employeemanager.infrastructure.employee.domain.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sojka.employeemanager.employee.domain.Employee;
-import com.sojka.employeemanager.employee.domain.EmployeeMapper;
-import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
-import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
-import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
-import com.sojka.employeemanager.employee.dto.EmployeeDto;
+import com.sojka.employeemanager.infrastructure.employee.domain.Employee;
+import com.sojka.employeemanager.infrastructure.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.DuplicateEmployeeException;
+import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.EmployeeNotFoundException;
+import com.sojka.employeemanager.infrastructure.employee.domain.repository.EmployeeRepository;
+import com.sojka.employeemanager.infrastructure.employee.dto.EmployeeDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,6 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository repository;
-    @Autowired
-    private ObjectMapper mapper;
 
     @Autowired
     public EmployeeServiceImpl(EmployeeRepository repository) {

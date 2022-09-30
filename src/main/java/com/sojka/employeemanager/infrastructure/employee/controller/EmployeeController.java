@@ -1,7 +1,7 @@
-package com.sojka.employeemanager.employee.controller;
+package com.sojka.employeemanager.infrastructure.employee.controller;
 
-import com.sojka.employeemanager.employee.domain.service.EmployeeService;
-import com.sojka.employeemanager.employee.dto.EmployeeDto;
+import com.sojka.employeemanager.infrastructure.employee.domain.service.EmployeeService;
+import com.sojka.employeemanager.infrastructure.employee.dto.EmployeeDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

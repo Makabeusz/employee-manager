@@ -1,4 +1,4 @@
-package com.sojka.employeemanager.employee.domain.exceptions;
+package com.sojka.employeemanager.infrastructure.employee.domain.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(basePackages = "com.sojka.employeemanager.employee.controller")
+@ControllerAdvice(basePackages = "com.sojka.employeemanager.infrastructure.employee.controller")
 @Slf4j
 public class EmployeeControllerErrorHandler {
 

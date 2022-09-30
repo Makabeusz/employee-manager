@@ -1,10 +1,11 @@
 package com.sojka.employeemanager.employee.domain.service;
 
-import com.sojka.employeemanager.employee.domain.Employee;
-import com.sojka.employeemanager.employee.domain.EmployeeMapper;
-import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
-import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
-import com.sojka.employeemanager.employee.dto.EmployeeDto;
+import com.sojka.employeemanager.infrastructure.employee.domain.Employee;
+import com.sojka.employeemanager.infrastructure.employee.domain.EmployeeMapper;
+import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.DuplicateEmployeeException;
+import com.sojka.employeemanager.infrastructure.employee.domain.repository.EmployeeRepository;
+import com.sojka.employeemanager.infrastructure.employee.domain.service.EmployeeService;
+import com.sojka.employeemanager.infrastructure.employee.dto.EmployeeDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
-package com.sojka.employeemanager.employee.domain.repository;
+package com.sojka.employeemanager.infrastructure.employee.domain.repository;
 
-import com.sojka.employeemanager.employee.domain.Employee;
+import com.sojka.employeemanager.infrastructure.employee.domain.Employee;
 
 import java.util.List;
 import java.util.Optional;

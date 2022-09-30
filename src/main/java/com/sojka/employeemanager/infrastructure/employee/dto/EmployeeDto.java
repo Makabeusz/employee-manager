@@ -1,4 +1,4 @@
-package com.sojka.employeemanager.employee.dto;
+package com.sojka.employeemanager.infrastructure.employee.dto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
-package com.sojka.employeemanager.employee.domain.service;
+package com.sojka.employeemanager.infrastructure.employee.domain.service;
 
-import com.sojka.employeemanager.employee.dto.EmployeeDto;
+import com.sojka.employeemanager.infrastructure.employee.dto.EmployeeDto;
 
 import java.util.List;
 

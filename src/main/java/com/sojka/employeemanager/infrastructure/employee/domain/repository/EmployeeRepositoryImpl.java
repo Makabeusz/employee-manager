@@ -1,6 +1,6 @@
-package com.sojka.employeemanager.employee.domain.repository;
+package com.sojka.employeemanager.infrastructure.employee.domain.repository;
 
-import com.sojka.employeemanager.employee.domain.Employee;
+import com.sojka.employeemanager.infrastructure.employee.domain.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

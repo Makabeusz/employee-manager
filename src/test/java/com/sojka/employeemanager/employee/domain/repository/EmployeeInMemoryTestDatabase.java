@@ -1,7 +1,7 @@
 package com.sojka.employeemanager.employee.domain.repository;
 
-import com.sojka.employeemanager.employee.domain.Employee;
-import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
+import com.sojka.employeemanager.infrastructure.employee.domain.Employee;
+import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.employee.dto.SampleEmployee;
 
 import java.util.ArrayList;

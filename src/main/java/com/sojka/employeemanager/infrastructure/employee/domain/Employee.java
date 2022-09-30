@@ -1,4 +1,4 @@
-package com.sojka.employeemanager.employee.domain;
+package com.sojka.employeemanager.infrastructure.employee.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

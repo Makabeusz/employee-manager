@@ -1,4 +1,4 @@
-package com.sojka.employeemanager.employee.domain.exceptions;
+package com.sojka.employeemanager.infrastructure.employee.domain.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
