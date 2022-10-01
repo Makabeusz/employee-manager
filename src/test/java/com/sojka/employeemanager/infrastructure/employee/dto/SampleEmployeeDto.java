@@ -7,24 +7,24 @@ import java.util.List;
 public interface SampleEmployeeDto extends SampleEmployee {
 
     default EmployeeDto firstEmployeeDto() {
-        return EmployeeMapper.mapToEmployeeDto(firstEmployee());
+        return EmployeeMapper.toEmployeeDto(firstEmployee());
     }
 
     default EmployeeDto secondEmployeeDto() {
-        return EmployeeMapper.mapToEmployeeDto(secondEmployee());
+        return EmployeeMapper.toEmployeeDto(secondEmployee());
     }
 
     default EmployeeDto thirdEmployeeDto() {
-        return EmployeeMapper.mapToEmployeeDto(thirdEmployee());
+        return EmployeeMapper.toEmployeeDto(thirdEmployee());
     }
 
     default EmployeeDto newEmployeeDto() {
-        return EmployeeMapper.mapToEmployeeDto(newEmployee());
+        return EmployeeMapper.toEmployeeDto(newEmployee());
     }
 
     default List<EmployeeDto> newEmployeesDto() {
-        return List.of(EmployeeMapper.mapToEmployeeDto(john()),
-                EmployeeMapper.mapToEmployeeDto(hank()),
-                EmployeeMapper.mapToEmployeeDto(luize()));
+        return List.of(EmployeeMapper.toEmployeeDto(john()),
+                EmployeeMapper.toEmployeeDto(hank()),
+                EmployeeMapper.toEmployeeDto(luize()));
     }
 }

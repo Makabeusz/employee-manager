@@ -178,10 +178,10 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 .birthDate("1995-06-20")
                 .personalId("12345612345")
                 .build();
-        EmployeeDto wrongDate = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
-        EmployeeDto noName = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
-        EmployeeDto noSurname = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
-        EmployeeDto noPersonalId = EmployeeMapper.mapToEmployeeDto(wellConstructedEmployee);
+        EmployeeDto wrongDate = EmployeeMapper.toEmployeeDto(wellConstructedEmployee);
+        EmployeeDto noName = EmployeeMapper.toEmployeeDto(wellConstructedEmployee);
+        EmployeeDto noSurname = EmployeeMapper.toEmployeeDto(wellConstructedEmployee);
+        EmployeeDto noPersonalId = EmployeeMapper.toEmployeeDto(wellConstructedEmployee);
         wrongDate.setBirthDate("2000-13-23");
         noName.setFirstName("");
         noSurname.setLastName("");
@@ -218,7 +218,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 @Override
                 public List<EmployeeDto> getAllEmployees() {
                     return repository.findAllObjects().stream()
-                            .map(EmployeeMapper::mapToEmployeeDto)
+                            .map(EmployeeMapper::toEmployeeDto)
                             .collect(Collectors.toList());
                 }
 
@@ -226,25 +226,25 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 public EmployeeDto getEmployee(String number) {
                     Employee employee = repository.findObject(number)
                             .orElseThrow(() -> new EmployeeNotFoundException(number));
-                    return EmployeeMapper.mapToEmployeeDto(employee);
+                    return EmployeeMapper.toEmployeeDto(employee);
                 }
 
                 @Override
                 public EmployeeDto addEmployee(EmployeeDto employeeDto) {
                     if (repository.exists(employeeDto.getPersonalId()))
                         throw new DuplicateKeyException(employeeDto.toString());
-                    Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
-                    return EmployeeMapper.mapToEmployeeDto(
+                    Employee employee = EmployeeMapper.toEmployee(employeeDto);
+                    return EmployeeMapper.toEmployeeDto(
                             repository.saveObject(employee));
                 }
 
                 @Override
                 public List<EmployeeDto> addEmployees(List<EmployeeDto> employeeDtos) {
                     List<Employee> employees = employeeDtos.stream()
-                            .map(EmployeeMapper::mapToEmployee)
+                            .map(EmployeeMapper::toEmployee)
                             .collect(Collectors.toList());
                     return repository.saveAllObjects(employees).stream()
-                            .map(EmployeeMapper::mapToEmployeeDto)
+                            .map(EmployeeMapper::toEmployeeDto)
                             .collect(Collectors.toList());
                 }
             };

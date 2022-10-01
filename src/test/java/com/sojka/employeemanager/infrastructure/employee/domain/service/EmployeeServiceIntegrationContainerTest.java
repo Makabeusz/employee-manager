@@ -84,7 +84,7 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
         Optional<Employee> actual = repository.findEmployeeByPersonalId(saved.getPersonalId());
 
         // then
-        assertThat(EmployeeMapper.mapToEmployeeDto(actual.get())).isEqualTo(saved);
+        assertThat(EmployeeMapper.toEmployeeDto(actual.get())).isEqualTo(saved);
     }
 
     @Test
@@ -103,7 +103,7 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
     void should_throw_DuplicateEmployeeException_and_refused_to_save_any_employees_if_duplicate_is_within() {
         // given
         List<EmployeeDto> primaryList = repository.findAllEmployees().stream()
-                .map(EmployeeMapper::mapToEmployeeDto)
+                .map(EmployeeMapper::toEmployeeDto)
                 .collect(Collectors.toList());
         List<EmployeeDto> newWithOneDuplicate = new ArrayList<>(List.of(thirdEmployeeDto()));
         newWithOneDuplicate.addAll(newEmployeesDto());
@@ -121,7 +121,7 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
     void should_correctly_save_employees_and_then_query_for_them() {
         // given
         List<EmployeeDto> primaryList = repository.findAllEmployees().stream()
-                .map(EmployeeMapper::mapToEmployeeDto)
+                .map(EmployeeMapper::toEmployeeDto)
                 .collect(Collectors.toList());
         List<EmployeeDto> newEmployees = new ArrayList<>(newEmployeesDto());
 

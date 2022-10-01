@@ -21,6 +21,6 @@ public class Education implements DomainObject {
 
     @Override
     public String getObjectId() {
-        return this.id;
+        return this.id + " " + this.degree;
     }
 }

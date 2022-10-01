@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = repository.findAllEmployees();
         return employees.stream()
-                .map(EmployeeMapper::mapToEmployeeDto)
+                .map(EmployeeMapper::toEmployeeDto)
                 .collect(Collectors.toList());
     }
 
@@ -31,17 +31,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto getEmployee(String number) {
         Employee employee = repository.findEmployeeById(number)
                 .orElseThrow(() -> new EmployeeNotFoundException(number));
-        return EmployeeMapper.mapToEmployeeDto(employee);
+        return EmployeeMapper.toEmployeeDto(employee);
     }
 
     @Override
     public EmployeeDto addEmployee(EmployeeDto employeeDto) {
-        Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
+        Employee employee = EmployeeMapper.toEmployee(employeeDto);
         try {
             Employee saved = repository.save(employee);
-            return EmployeeMapper.mapToEmployeeDto(saved);
+            return EmployeeMapper.toEmployeeDto(saved);
         } catch (DuplicateKeyException e) {
-            EmployeeDto duplicate = EmployeeMapper.mapToEmployeeDto(
+            EmployeeDto duplicate = EmployeeMapper.toEmployeeDto(
                     repository.findEmployeeByPersonalId(employee.getPersonalId()).get());
             throw new DuplicateEmployeeException(duplicate.toString());
         }
@@ -50,10 +50,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDto> addEmployees(List<EmployeeDto> employeeDtos) {
         List<Employee> employees = employeeDtos.stream()
-                .map(EmployeeMapper::mapToEmployee)
+                .map(EmployeeMapper::toEmployee)
                 .collect(Collectors.toList());
         return repository.saveAll(employees).stream()
-                .map(EmployeeMapper::mapToEmployeeDto)
+                .map(EmployeeMapper::toEmployeeDto)
                 .collect(Collectors.toList());
     }
 }
