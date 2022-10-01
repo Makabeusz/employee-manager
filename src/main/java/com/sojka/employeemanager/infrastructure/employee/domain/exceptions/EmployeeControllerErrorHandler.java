@@ -15,14 +15,15 @@ public class EmployeeControllerErrorHandler {
     @ExceptionHandler(EmployeeNotFoundException.class)
     ResponseEntity<EmployeeErrorResponse> handleEmployeeNotFoundException(EmployeeNotFoundException e) {
         EmployeeErrorResponse response = new EmployeeErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        log.error(e.getMessage());
+        log.warn(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({DuplicateEmployeeException.class, DuplicateKeyException.class})
-    ResponseEntity<EmployeeErrorResponse> handleDuplicateEmployeeException(DuplicateEmployeeException e) {
-        EmployeeErrorResponse response = new EmployeeErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
-        log.error(e.getMessage());
+    @ExceptionHandler(DuplicateKeyException.class)
+    ResponseEntity<EmployeeErrorResponse> handleDuplicateEmployeeException(DuplicateKeyException e) {
+        String message = "Such employee already exists: " + e.getMessage();
+        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.CONFLICT);
+        log.warn(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 

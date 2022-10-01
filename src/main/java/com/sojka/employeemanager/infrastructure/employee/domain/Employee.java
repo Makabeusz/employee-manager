@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.infrastructure.employee.domain;
 
+import com.sojka.employeemanager.infrastructure.DomainObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee {
+public class Employee implements DomainObject {
 
     private String id;
     private String firstName;
@@ -18,4 +19,8 @@ public class Employee {
     private String birthDate;
     private String personalId;
 
+    @Override
+    public String getObjectId() {
+        return this.getPersonalId();
+    }
 }

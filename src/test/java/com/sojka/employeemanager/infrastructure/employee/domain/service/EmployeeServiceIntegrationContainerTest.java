@@ -1,12 +1,11 @@
-package com.sojka.employeemanager.employee.domain.service;
+package com.sojka.employeemanager.infrastructure.employee.domain.service;
 
 import com.sojka.employeemanager.infrastructure.employee.domain.Employee;
 import com.sojka.employeemanager.infrastructure.employee.domain.EmployeeMapper;
 import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.infrastructure.employee.domain.repository.EmployeeRepository;
-import com.sojka.employeemanager.infrastructure.employee.domain.service.EmployeeService;
 import com.sojka.employeemanager.infrastructure.employee.dto.EmployeeDto;
-import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
+import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployeeDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -92,10 +91,11 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
     void should_throw_DuplicateEmployeeException_for_duplicate_saving_attempt() {
         // given
         EmployeeDto existing = firstEmployeeDto();
+        String existingEmployeePersonalId = existing.getPersonalId();
 
         // when / then
         assertThatThrownBy(() -> service.addEmployee(existing))
-                .hasMessageContaining("Such employee already exists")
+                .hasMessageContaining(existingEmployeePersonalId)
                 .isInstanceOf(DuplicateEmployeeException.class);
     }
 

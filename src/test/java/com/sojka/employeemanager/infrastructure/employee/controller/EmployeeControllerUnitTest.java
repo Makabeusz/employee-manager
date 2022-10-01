@@ -1,23 +1,21 @@
-package com.sojka.employeemanager.employee.controller;
+package com.sojka.employeemanager.infrastructure.employee.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
-import com.sojka.employeemanager.infrastructure.employee.controller.EmployeeController;
 import com.sojka.employeemanager.infrastructure.employee.domain.Employee;
 import com.sojka.employeemanager.infrastructure.employee.domain.EmployeeMapper;
-import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.EmployeeControllerErrorHandler;
 import com.sojka.employeemanager.infrastructure.employee.domain.exceptions.EmployeeNotFoundException;
-import com.sojka.employeemanager.employee.domain.repository.EmployeeInMemoryTestDatabase;
+import com.sojka.employeemanager.infrastructure.InMemoryTestDatabase;
 import com.sojka.employeemanager.infrastructure.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.infrastructure.employee.domain.service.EmployeeService;
 import com.sojka.employeemanager.infrastructure.employee.domain.service.EmployeeServiceImpl;
 import com.sojka.employeemanager.infrastructure.employee.dto.EmployeeDto;
-import com.sojka.employeemanager.employee.dto.SampleEmployee;
-import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
+import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployee;
+import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployeeDto;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -163,8 +162,8 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
 
         // when
         mockMvc.perform(post("/employees")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(malformedEmployee))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(malformedEmployee))
                 .andDo(print())
                 .andExpect(badRequestStatus())
                 .andExpect(content().string(Matchers.containsString(validationMessage)));
@@ -209,23 +208,23 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
     }
 
     @Import(MessageSourceConfig.class)
-    static class MockMvcConfig {
+    static class MockMvcConfig implements SampleEmployee {
 
-        private final EmployeeInMemoryTestDatabase repository = new EmployeeInMemoryTestDatabase();
+        private final InMemoryTestDatabase<Employee> repository = InMemoryTestDatabase.of(firstEmployee(), secondEmployee(), thirdEmployee());
 
         @Bean
         EmployeeService employeeService() {
             return new EmployeeServiceImpl(employeeRepository()) {
                 @Override
                 public List<EmployeeDto> getAllEmployees() {
-                    return repository.findAllEmployees().stream()
+                    return repository.findAllObjects().stream()
                             .map(EmployeeMapper::mapToEmployeeDto)
                             .collect(Collectors.toList());
                 }
 
                 @Override
                 public EmployeeDto getEmployee(String number) {
-                    Employee employee = repository.findEmployee(number)
+                    Employee employee = repository.findObject(number)
                             .orElseThrow(() -> new EmployeeNotFoundException(number));
                     return EmployeeMapper.mapToEmployeeDto(employee);
                 }
@@ -233,10 +232,10 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 @Override
                 public EmployeeDto addEmployee(EmployeeDto employeeDto) {
                     if (repository.exists(employeeDto.getPersonalId()))
-                        throw new DuplicateEmployeeException(employeeDto.toString());
+                        throw new DuplicateKeyException(employeeDto.toString());
                     Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
                     return EmployeeMapper.mapToEmployeeDto(
-                            repository.saveEmployee(employee));
+                            repository.saveObject(employee));
                 }
 
                 @Override
@@ -244,7 +243,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                     List<Employee> employees = employeeDtos.stream()
                             .map(EmployeeMapper::mapToEmployee)
                             .collect(Collectors.toList());
-                    return repository.saveAllEmployees(employees).stream()
+                    return repository.saveAllObjects(employees).stream()
                             .map(EmployeeMapper::mapToEmployeeDto)
                             .collect(Collectors.toList());
                 }

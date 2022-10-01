@@ -1,6 +1,6 @@
 package com.sojka.employeemanager;
 
-import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
+import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployeeDto;
 import org.hamcrest.Matchers;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.ResultMatcher;
