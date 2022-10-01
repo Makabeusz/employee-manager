@@ -28,7 +28,7 @@ public interface SampleEducationDegree {
 
     default Education secondEmployeeSecondaryDegree() {
         return Education.builder()
-                .id("1")
+                .id("2")
                 .degree("Secondary")
                 .schoolName("College of Lake County")
                 .address("19351 W Washington St., Grayslake, IL, 60030-1198")
