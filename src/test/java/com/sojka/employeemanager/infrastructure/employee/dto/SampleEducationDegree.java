@@ -37,5 +37,16 @@ public interface SampleEducationDegree {
                 .build();
     }
 
+    default Education newSecondEmployeeEducation() {
+        return Education.builder()
+                .id("2")
+                .degree("Bachelor")
+                .schoolName("University of Oxford")
+                .address("Wellington Square, Oxford, OX1 2JD")
+                .startDate("2018-10-02")
+                .finishDate("2021-07-12")
+                .build();
+    }
+
 
 }

@@ -17,4 +17,8 @@ public interface SampleEducationDegreeDto extends SampleEducationDegree{
         return EducationMapper.toEducationDto(secondEmployeeSecondaryDegree());
     }
 
+    default EducationDto newSecondEmployeeEducationDto() {
+        return EducationMapper.toEducationDto(newSecondEmployeeEducation());
+    }
+
 }

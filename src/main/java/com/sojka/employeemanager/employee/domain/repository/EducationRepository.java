@@ -10,4 +10,8 @@ public interface EducationRepository {
     List<Education> findAllDegrees(String id);
 
     Optional<Education> findMostRecentDegree(String id);
+
+    Education save(Education education);
+
+    boolean exists(Education education);
 }

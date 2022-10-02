@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.employee.domain.exceptions;
 
+import com.sojka.employeemanager.employee.controller.EmployeeController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(basePackages = "com.sojka.employeemanager.employee.controller")
+@ControllerAdvice(basePackageClasses = EmployeeController.class)
 @Slf4j
 public class EmployeeControllerErrorHandler {
 
@@ -35,10 +36,4 @@ public class EmployeeControllerErrorHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoEducationException.class)
-    ResponseEntity<EmployeeErrorResponse> handleNoEducationException(NoEducationException e) {
-        String message = "Employee with ID " + e.getMessage() + " have no university degree.";
-        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
-    }
 }

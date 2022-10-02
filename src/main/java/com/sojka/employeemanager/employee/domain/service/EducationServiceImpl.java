@@ -1,6 +1,7 @@
 package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.employee.domain.Education;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedEducationException;
 import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException;
 import com.sojka.employeemanager.employee.domain.repository.EducationRepository;
 import com.sojka.employeemanager.employee.dto.EducationDto;
@@ -30,5 +31,13 @@ public class EducationServiceImpl implements EducationService {
         Optional<Education> lastDegree = repository.findMostRecentDegree(number);
         return EducationMapper.toEducationDto(
                 lastDegree.orElseThrow(() -> new NoEducationException(number)));
+    }
+
+    @Override
+    public EducationDto addEmployeeDegree(EducationDto educationDto) {
+        Education degree = EducationMapper.toEducation(educationDto);
+        if (repository.exists(degree)) throw new DuplicatedEducationException(degree.toString());
+        Education saved = repository.save(degree);
+        return EducationMapper.toEducationDto(saved);
     }
 }

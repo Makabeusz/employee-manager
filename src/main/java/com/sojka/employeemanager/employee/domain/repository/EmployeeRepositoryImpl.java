@@ -79,9 +79,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 "SELECT * FROM employees\n" +
                 "WHERE personal_id = ?)\n" +
                 "THEN true ELSE false END AS boolean";
-        int result = jdbcTemplate.queryForObject(sql,
-                (rs, rowNum) -> rs.getRow(),
+        return 1 == jdbcTemplate.queryForObject(sql,
+                (rs, rowNum) -> rs.getInt("boolean"),
                 employee.getPersonalId());
-        return result == 1;
     }
 }

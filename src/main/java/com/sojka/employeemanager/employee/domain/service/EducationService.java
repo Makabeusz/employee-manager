@@ -9,4 +9,6 @@ public interface EducationService {
     List<EducationDto> getEmployeeDegrees(String number);
 
     EducationDto getEmployeeMostRecentDegree(String number);
+
+    EducationDto addEmployeeDegree(EducationDto educationDto);
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
-import com.sojka.employeemanager.employee.domain.exceptions.EmployeeControllerErrorHandler;
+import com.sojka.employeemanager.employee.domain.exceptions.EducationControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException;
 import com.sojka.employeemanager.infrastructure.InMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.Education;
@@ -97,7 +97,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
         return reader.readValue(content);
     }
 
-    @Import({MessageSourceConfig.class, EmployeeControllerErrorHandler.class})
+    @Import({MessageSourceConfig.class, EducationControllerErrorHandler.class})
     static class MockMvcConfig implements SampleEducationDegree {
 
         private final InMemoryTestDatabase<Education> repository =
@@ -124,6 +124,12 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                             .min((e1, e2) -> (LocalDate.parse(e2.getFinishDate()).isAfter(LocalDate.parse(e1.getFinishDate()))) ? 1 : 0);
                     return EducationMapper.toEducationDto(
                             lastDegree.orElseThrow(() -> new NoEducationException(number)));
+                }
+
+                @Override
+                public EducationDto addEmployeeDegree(EducationDto educationDto) {
+                    return null;
+                    // TODO: unit tests here
                 }
             };
         }
