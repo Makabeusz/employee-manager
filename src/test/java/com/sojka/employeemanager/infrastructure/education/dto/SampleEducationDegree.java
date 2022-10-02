@@ -1,6 +1,6 @@
 package com.sojka.employeemanager.infrastructure.education.dto;
 
-import com.sojka.employeemanager.infrastructure.education.domain.Education;
+import com.sojka.employeemanager.employee.domain.Education;
 
 public interface SampleEducationDegree {
 

@@ -1,6 +1,7 @@
 package com.sojka.employeemanager.infrastructure.education.dto;
 
-import com.sojka.employeemanager.infrastructure.education.domain.EducationMapper;
+import com.sojka.employeemanager.employee.utils.EducationMapper;
+import com.sojka.employeemanager.employee.dto.EducationDto;
 
 public interface SampleEducationDegreeDto extends SampleEducationDegree{
 

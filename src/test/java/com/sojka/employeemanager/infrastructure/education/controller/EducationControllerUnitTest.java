@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.infrastructure.InMemoryTestDatabase;
-import com.sojka.employeemanager.infrastructure.education.domain.Education;
-import com.sojka.employeemanager.infrastructure.education.domain.EducationMapper;
-import com.sojka.employeemanager.infrastructure.education.domain.repository.EducationRepository;
-import com.sojka.employeemanager.infrastructure.education.domain.service.EducationService;
-import com.sojka.employeemanager.infrastructure.education.dto.EducationDto;
+import com.sojka.employeemanager.employee.domain.Education;
+import com.sojka.employeemanager.employee.utils.EducationMapper;
+import com.sojka.employeemanager.employee.domain.repository.EducationRepository;
+import com.sojka.employeemanager.employee.domain.service.EducationService;
+import com.sojka.employeemanager.employee.dto.EducationDto;
 import com.sojka.employeemanager.infrastructure.education.dto.SampleEducationDegree;
 import com.sojka.employeemanager.infrastructure.education.dto.SampleEducationDegreeDto;
+import com.sojka.employeemanager.employee.controller.EducationController;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                 firstEmployeeMasterDegreeDto());
 
         // when
-        MvcResult result = mockMvc.perform(get("/education/" + FIRST_EMPLOYEE_ID))
+        MvcResult result = mockMvc.perform(get("/employees/" + FIRST_EMPLOYEE_ID + "/education/"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -72,7 +73,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
         String firstEmployeeHighestDegree = "\"degree\":\"Master\"";
 
         // when
-        mockMvc.perform(get("/education/" + FIRST_EMPLOYEE_ID + "/recent"))
+        mockMvc.perform(get("/employees/" + FIRST_EMPLOYEE_ID + "/education/recent"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString(firstEmployeeHighestDegree)));

@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.infrastructure;
 
+import com.sojka.employeemanager.employee.domain.DomainObject;
 import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployee;
 import org.springframework.dao.DuplicateKeyException;
 
