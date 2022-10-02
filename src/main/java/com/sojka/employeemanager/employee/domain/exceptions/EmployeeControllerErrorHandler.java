@@ -34,4 +34,11 @@ public class EmployeeControllerErrorHandler {
         log.warn(message);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(NoEducationException.class)
+    ResponseEntity<EmployeeErrorResponse> handleNoEducationException(NoEducationException e) {
+        String message = "Employee with ID " + e.getMessage() + " have no university degree.";
+        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    }
 }

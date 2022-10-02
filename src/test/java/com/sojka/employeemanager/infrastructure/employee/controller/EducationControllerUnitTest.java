@@ -1,18 +1,20 @@
-package com.sojka.employeemanager.infrastructure.education.controller;
+package com.sojka.employeemanager.infrastructure.employee.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
+import com.sojka.employeemanager.employee.domain.exceptions.EmployeeControllerErrorHandler;
+import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException;
 import com.sojka.employeemanager.infrastructure.InMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.Education;
 import com.sojka.employeemanager.employee.utils.EducationMapper;
 import com.sojka.employeemanager.employee.domain.repository.EducationRepository;
 import com.sojka.employeemanager.employee.domain.service.EducationService;
 import com.sojka.employeemanager.employee.dto.EducationDto;
-import com.sojka.employeemanager.infrastructure.education.dto.SampleEducationDegree;
-import com.sojka.employeemanager.infrastructure.education.dto.SampleEducationDegreeDto;
+import com.sojka.employeemanager.infrastructure.employee.dto.SampleEducationDegree;
+import com.sojka.employeemanager.infrastructure.employee.dto.SampleEducationDegreeDto;
 import com.sojka.employeemanager.employee.controller.EducationController;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
         // given
         String firstEmployeeHighestDegree = "\"degree\":\"Master\"";
 
-        // when
+        // when / then
         mockMvc.perform(get("/employees/" + FIRST_EMPLOYEE_ID + "/education/recent"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -80,7 +81,14 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
     }
 
     @Test
-    void should_return_() {
+    void should_return_204_for_employee_without_university_degree() throws Exception {
+        // given
+        String employeeWithoutDegree = "100";
+
+        // when
+        mockMvc.perform(get("/employees/" + employeeWithoutDegree + "/education/recent"))
+                .andDo(print())
+                .andExpect(noContentStatus());
     }
 
     private List<EducationDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -89,7 +97,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
         return reader.readValue(content);
     }
 
-    @Import(MessageSourceConfig.class)
+    @Import({MessageSourceConfig.class, EmployeeControllerErrorHandler.class})
     static class MockMvcConfig implements SampleEducationDegree {
 
         private final InMemoryTestDatabase<Education> repository =
@@ -110,13 +118,12 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
 
                 @Override
                 public EducationDto getEmployeeMostRecentDegree(String number) {
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     Optional<Education> lastDegree = repository.findAllObjects().stream()
                             .filter(education -> education.getId().equals(number))
                             .collect(Collectors.toList()).stream()
                             .min((e1, e2) -> (LocalDate.parse(e2.getFinishDate()).isAfter(LocalDate.parse(e1.getFinishDate()))) ? 1 : 0);
                     return EducationMapper.toEducationDto(
-                            lastDegree.orElse(Education.builder().degree("No university degree.").build()));
+                            lastDegree.orElseThrow(() -> new NoEducationException(number)));
                 }
             };
         }

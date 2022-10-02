@@ -23,14 +23,16 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public List<Employee> findAllEmployees() {
-        String sql = "SELECT * FROM employees";
+        String sql = "SELECT * " +
+                "FROM employees";
         return jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class));
     }
 
     @Override
     public Optional<Employee> findEmployeeById(String number) {
-        String sql = "SELECT * FROM employees\n" +
+        String sql = "SELECT * " +
+                "FROM employees\n" +
                 "WHERE id = ?";
         Employee employee = jdbcTemplate.queryForObject(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),
@@ -52,7 +54,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public Optional<Employee> findEmployeeByPersonalId(String personalId) {
-        String sql = "SELECT * FROM employees\n" +
+        String sql = "SELECT * " +
+                "FROM employees\n" +
                 "WHERE personal_id = ?";
         List<Employee> employee = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),

@@ -18,6 +18,10 @@ public interface ResultMatcherHelper extends SampleEmployeeDto{
         return content().string(Matchers.containsString("{\"firstName\":\"Antoine\",\"secondName\":null,\"lastName\":\"Rosaille\",\"birthDate\":\"1995-01-12\",\"personalId\":\"95011286532\"}"));
     }
 
+    default ResultMatcher noContentStatus() {
+        return status().is(HttpStatus.NO_CONTENT.value());
+    }
+
     default ResultMatcher conflictStatus() {
         return status().is(HttpStatus.CONFLICT.value());
     }
