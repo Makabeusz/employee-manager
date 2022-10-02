@@ -1,6 +1,7 @@
 package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.employee.domain.Education;
+import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException;
 import com.sojka.employeemanager.employee.domain.repository.EducationRepository;
 import com.sojka.employeemanager.employee.dto.EducationDto;
 import com.sojka.employeemanager.employee.utils.EducationMapper;
@@ -28,6 +29,6 @@ public class EducationServiceImpl implements EducationService {
     public EducationDto getEmployeeMostRecentDegree(String number) {
         Optional<Education> lastDegree = repository.findMostRecentDegree(number);
         return EducationMapper.toEducationDto(
-                lastDegree.orElse(Education.builder().degree("No university degree.").build()));
+                lastDegree.orElseThrow(() -> new NoEducationException(number)));
     }
 }

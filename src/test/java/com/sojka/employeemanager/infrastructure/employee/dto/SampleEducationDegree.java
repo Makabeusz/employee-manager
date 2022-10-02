@@ -33,7 +33,7 @@ public interface SampleEducationDegree {
                 .schoolName("College of Lake County")
                 .address("19351 W Washington St., Grayslake, IL, 60030-1198")
                 .startDate("1990-10-01")
-                .finishDate("2015-06-29")
+                .finishDate("1995-06-25")
                 .build();
     }
 

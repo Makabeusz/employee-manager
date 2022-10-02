@@ -39,6 +39,7 @@ public class EducationRepositoryImpl implements EducationRepository {
         List<Education> result = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Education.class),
                 id);
-        return Optional.ofNullable(result.get(0));
+        if (result.isEmpty()) return Optional.empty();
+        return Optional.of(result.get(0));
     }
 }

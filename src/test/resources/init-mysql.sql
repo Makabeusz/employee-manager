@@ -25,7 +25,7 @@ CREATE TABLE `education` (
                                   `id` int(11)  NOT NULL,
                                   `degree` varchar(45) NOT NULL,
                                   `school_name` varchar(45) NOT NULL,
-                                  `address` varchar(45) DEFAULT NULL,
+                                  `address` varchar(90) DEFAULT NULL,
                                   `start_date` date NOT NULL,
                                   `finish_date` date NOT NULL,
                                   FOREIGN KEY (id) REFERENCES `employees`(id)
@@ -35,3 +35,8 @@ INSERT INTO `employees` (first_name, second_name, last_name, birth_date, persona
 VALUES ('Patrick', 'Wayne', 'Swayze', '1952-08-12', '52081212346'),
        ('John', null, 'Wayne', '1907-05-26', '07052612356'),
        ('Calvin', 'Cordozar', 'Broadus', '1971-10-20', '71102012346');
+
+INSERT INTO education(id, degree, school_name, address, start_date, finish_date)
+VALUES('1', 'Master', 'University of London', 'Gower Street, London, WC1E 6BT', '2013-10-01', '2015-06-29'),
+      ('1', 'Bachelor', 'University of London', 'Gower Street, London, WC1E 6BT', '2010-10-01', '2013-07-02'),
+      ('2', 'Secondary', 'College of Lake County', '19351 W Washington St., Grayslake, IL, 60030-1198', '1990-10-01', '1995-06-25');
