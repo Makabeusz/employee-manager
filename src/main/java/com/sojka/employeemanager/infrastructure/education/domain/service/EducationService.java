@@ -7,4 +7,6 @@ import java.util.List;
 public interface EducationService {
 
     List<EducationDto> getEmployeeDegrees(String number);
+
+    EducationDto getEmployeeMostRecentDegree(String number);
 }

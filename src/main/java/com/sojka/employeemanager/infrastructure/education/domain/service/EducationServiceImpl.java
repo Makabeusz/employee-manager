@@ -11,4 +11,9 @@ public class EducationServiceImpl implements EducationService {
     public List<EducationDto> getEmployeeDegrees(String number) {
         return null;
     }
+
+    @Override
+    public EducationDto getEmployeeMostRecentDegree(String number) {
+        return null;
+    }
 }
