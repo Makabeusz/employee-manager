@@ -37,4 +37,15 @@ public interface SampleEmployeeFamily {
                 .build();
     }
 
+    default Family newSecondEmployeeChild() {
+        return Family.builder()
+                .id("3")
+                .firstName("Julia")
+                .secondName(null)
+                .lastName("Wayne")
+                .birthDate("1946-08-01")
+                .kinship("child")
+                .build();
+    }
+
 }

@@ -15,4 +15,8 @@ public interface SampleEmployeeFamilyDto extends SampleEmployeeFamily {
     default FamilyDto secondEmployeeWifeDto() {
         return FamilyMapper.toFamilyDto(secondEmployeeWife());
     }
+
+    default FamilyDto newSecondEmployeeChildDto() {
+        return FamilyMapper.toFamilyDto(newSecondEmployeeChild());
+    }
 }

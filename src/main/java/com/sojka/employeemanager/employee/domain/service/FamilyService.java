@@ -8,4 +8,6 @@ public interface FamilyService {
     List<FamilyDto> getAllFamily(String id);
 
     List<FamilyDto> getAllChildren(String id);
+
+    FamilyDto addFamilyMember(FamilyDto familyMember);
 }

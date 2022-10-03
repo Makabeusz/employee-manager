@@ -13,6 +13,8 @@ public class FamilyDto implements Serializable {
 
     private static final long serialVersionUID = 1284134747468071096L;
 
+    @NotBlank(message = "{family.id}")
+    private String id;
     @NotBlank(message = "{family.firstname}")
     private String firstName;
     private String secondName;

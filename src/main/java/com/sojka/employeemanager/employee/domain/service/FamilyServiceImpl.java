@@ -28,4 +28,9 @@ public class FamilyServiceImpl implements FamilyService {
                 .map(FamilyMapper::toFamilyDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public FamilyDto addFamilyMember(FamilyDto familyMember) {
+        return null;//TODO: integration test
+    }
 }

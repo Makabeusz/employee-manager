@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.InMemoryTestDatabase;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.employee.domain.Family;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedFamilyException;
 import com.sojka.employeemanager.employee.domain.exceptions.handler.FamilyControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.repository.FamilyRepository;
 import com.sojka.employeemanager.employee.domain.service.FamilyService;
@@ -13,11 +14,13 @@ import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamily;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamilyDto;
 import com.sojka.employeemanager.employee.utils.FamilyMapper;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,7 +63,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     }
 
     @Test
-    void should_return_no_content_status_if_employee_has_no_family() throws Exception {
+    void should_return_empty_list_if_employee_has_no_family() throws Exception {
         String emptyList = "[]";
 
         mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_NO_FAMILY_ID + "/family"))
@@ -82,13 +86,38 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     }
 
     @Test
-    void should_return_no_content_status_if_employee_has_no_children() throws Exception {
+    void should_return_empty_list_if_employee_has_no_children() throws Exception {
         String emptyList = "[]";
 
         mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_WIFE + "/family/children"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(answerContains(emptyList));
+    }
+
+    @Test
+    void should_correctly_add_new_family_member() throws Exception {
+        String newChild = mapper.writeValueAsString(newSecondEmployeeChildDto());
+
+        mockMvc.perform(post("/employee/" + EMPLOYEE_WITH_WIFE + "/family")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newChild))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(answerContains(newChild));
+    }
+
+    @Test
+    void should_throw_DuplicatedFamilyException_on_adding_duplicate_family_member_attempt() throws Exception {
+        String duplicate = mapper.writeValueAsString(firstEmployeeChildDto());
+        String duplicateMessage = "The employee family member already exists";
+
+        mockMvc.perform(post("/employee/" + EMPLOYEE_WITH_WIFE + "/family")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(duplicate))
+                .andDo(print())
+                .andExpect(conflictStatus())
+                .andExpect(answerContains(duplicateMessage));
     }
 
     private List<FamilyDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -109,7 +138,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                 @Override
                 public List<FamilyDto> getAllFamily(String id) {
                     return repository.findAllObjects().stream()
-                            .filter(member -> member.getId().equals(id))
+                            .filter(member -> member.getObjectId().startsWith(id))
                             .map(FamilyMapper::toFamilyDto)
                             .collect(Collectors.toList());
                 }
@@ -117,10 +146,18 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                 @Override
                 public List<FamilyDto> getAllChildren(String id) {
                     return repository.findAllObjects().stream()
-                            .filter(member -> member.getId().equals(id))
+                            .filter(member -> member.getObjectId().startsWith(id))
                             .filter(member -> member.getKinship().equals("child"))
                             .map(FamilyMapper::toFamilyDto)
                             .collect(Collectors.toList());
+                }
+
+                @Override
+                public FamilyDto addFamilyMember(FamilyDto familyDto) {
+                    Family family = FamilyMapper.toFamily(familyDto);
+                    if (repository.exists(family.getObjectId())) throw new DuplicatedFamilyException(family.toString());
+                    return FamilyMapper.toFamilyDto(
+                            repository.saveObject(family));
                 }
             };
         }
