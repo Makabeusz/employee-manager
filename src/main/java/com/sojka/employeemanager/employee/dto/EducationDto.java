@@ -5,10 +5,13 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 @Data
 @Builder
-public class EducationDto {
+public class EducationDto implements Serializable {
+
+    private static final long serialVersionUID = -2036049078387728111L;
 
     @NotBlank(message = "{education.id}")
     private String id;

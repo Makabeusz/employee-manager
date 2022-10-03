@@ -7,7 +7,7 @@ import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.utils.EmployeeMapper;
-import com.sojka.employeemanager.employee.domain.exceptions.EmployeeControllerErrorHandler;
+import com.sojka.employeemanager.employee.domain.exceptions.handler.EmployeeControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import com.sojka.employeemanager.InMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;

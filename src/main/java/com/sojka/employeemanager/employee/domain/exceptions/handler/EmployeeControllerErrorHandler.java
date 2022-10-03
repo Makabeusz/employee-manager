@@ -1,6 +1,8 @@
-package com.sojka.employeemanager.employee.domain.exceptions;
+package com.sojka.employeemanager.employee.domain.exceptions.handler;
 
 import com.sojka.employeemanager.employee.controller.EmployeeController;
+import com.sojka.employeemanager.employee.domain.exceptions.EmployeeErrorResponse;
+import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;

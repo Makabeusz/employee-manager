@@ -3,7 +3,7 @@ package com.sojka.employeemanager.employee.utils;
 import com.sojka.employeemanager.employee.domain.Family;
 import com.sojka.employeemanager.employee.dto.FamilyDto;
 
-public class FamilyMapper {
+public interface FamilyMapper {
 
     static Family toFamily(FamilyDto employeeDto) {
         return Family.builder()

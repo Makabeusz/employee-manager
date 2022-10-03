@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedEducationException;
-import com.sojka.employeemanager.employee.domain.exceptions.EducationControllerErrorHandler;
+import com.sojka.employeemanager.employee.domain.exceptions.handler.EducationControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException;
 import com.sojka.employeemanager.InMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.Education;

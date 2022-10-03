@@ -5,10 +5,13 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 @Data
 @Builder
-public class FamilyDto {
+public class FamilyDto implements Serializable {
+
+    private static final long serialVersionUID = 1284134747468071096L;
 
     @NotBlank(message = "{family.firstname}")
     private String firstName;
