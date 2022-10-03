@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.employee.domain.service;
 
+import com.sojka.employeemanager.EmployeeManagerApplication;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.utils.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
@@ -9,6 +10,7 @@ import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,7 +18,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.catchException;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 @Testcontainers
-@SpringBootTest
+@SpringBootTest(classes = EmployeeServiceIntegrationContainerTest.TestConfig.class)
 @ActiveProfiles("container")
 class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
 
@@ -133,5 +134,10 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
         assertThat(service.getAllEmployees())
                 .containsAll(primaryList)
                 .containsAll(saved);
+    }
+
+    @Import(EmployeeManagerApplication.class)
+    static class TestConfig {
+
     }
 }

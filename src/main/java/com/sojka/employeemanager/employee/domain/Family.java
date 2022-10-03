@@ -1,10 +1,14 @@
 package com.sojka.employeemanager.employee.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Family implements DomainObject {
 
     private String id;

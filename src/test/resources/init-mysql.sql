@@ -1,7 +1,3 @@
-DROP SCHEMA IF EXISTS `employee-manager`;
-CREATE SCHEMA `employee-manager` ;
-USE `employee-manager`;
-
 DROP TABLE IF EXISTS `employees`;
 CREATE TABLE `employees` (
                              `id` INT(11) NOT NULL AUTO_INCREMENT,

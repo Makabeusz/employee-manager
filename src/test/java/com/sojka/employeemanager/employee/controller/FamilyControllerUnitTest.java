@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.InMemoryTestDatabase;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.employee.domain.Family;
-import com.sojka.employeemanager.employee.domain.exceptions.NoChildrenException;
-import com.sojka.employeemanager.employee.domain.exceptions.NoFamilyException;
 import com.sojka.employeemanager.employee.domain.exceptions.handler.FamilyControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.repository.FamilyRepository;
 import com.sojka.employeemanager.employee.domain.service.FamilyService;
@@ -43,7 +41,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     @Autowired
     private ObjectMapper mapper;
 
-    final String FIRST_WITH_WIFE_AND_CHILD = "1";
+    final String EMPLOYEE_WITH_WIFE_AND_CHILD = "1";
     final String EMPLOYEE_WITH_WIFE = "2";
     final String EMPLOYEE_WITH_NO_FAMILY_ID = "3";
 
@@ -51,7 +49,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     void should_return_all_employee_family_members() throws Exception {
         List<FamilyDto> actualFamily = List.of(firstEmployeeWifeDto(), firstEmployeeChildDto());
 
-        MvcResult result = mockMvc.perform(get("/employee/" + FIRST_WITH_WIFE_AND_CHILD + "/family"))
+        MvcResult result = mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_WIFE_AND_CHILD + "/family"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -62,17 +60,19 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
 
     @Test
     void should_return_no_content_status_if_employee_has_no_family() throws Exception {
+        String emptyList = "[]";
+
         mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_NO_FAMILY_ID + "/family"))
                 .andDo(print())
-                .andExpect(noContentStatus())
-                .andExpect(answerContains("The employee with ID 3 have no family."));
+                .andExpect(status().isOk())
+                .andExpect(answerContains(emptyList));
     }
 
     @Test
     void should_return_all_employee_children() throws Exception {
         List<FamilyDto> actualChildren = List.of(firstEmployeeChildDto());
 
-        MvcResult result = mockMvc.perform(get("/employee/" + FIRST_WITH_WIFE_AND_CHILD + "/family/children"))
+        MvcResult result = mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_WIFE_AND_CHILD + "/family/children"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -83,10 +83,12 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
 
     @Test
     void should_return_no_content_status_if_employee_has_no_children() throws Exception {
+        String emptyList = "[]";
+
         mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_WIFE + "/family/children"))
                 .andDo(print())
-                .andExpect(noContentStatus())
-                .andExpect(answerContains("The employee with ID 2 have no children."));
+                .andExpect(status().isOk())
+                .andExpect(answerContains(emptyList));
     }
 
     private List<FamilyDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -106,23 +108,19 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
             return new FamilyService() {
                 @Override
                 public List<FamilyDto> getAllFamily(String id) {
-                    List<FamilyDto> familyMembers = repository.findAllObjects().stream()
+                    return repository.findAllObjects().stream()
                             .filter(member -> member.getId().equals(id))
                             .map(FamilyMapper::toFamilyDto)
                             .collect(Collectors.toList());
-                    if (familyMembers.isEmpty()) throw new NoFamilyException(id);
-                    return familyMembers;
                 }
 
                 @Override
                 public List<FamilyDto> getAllChildren(String id) {
-                    List<FamilyDto> familyMembers = repository.findAllObjects().stream()
+                    return repository.findAllObjects().stream()
                             .filter(member -> member.getId().equals(id))
                             .filter(member -> member.getKinship().equals("child"))
                             .map(FamilyMapper::toFamilyDto)
                             .collect(Collectors.toList());
-                    if (familyMembers.isEmpty()) throw new NoChildrenException(id);
-                    return familyMembers;
                 }
             };
         }
