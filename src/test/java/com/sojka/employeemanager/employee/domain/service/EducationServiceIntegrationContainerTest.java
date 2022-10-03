@@ -7,7 +7,7 @@ import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException
 import com.sojka.employeemanager.employee.domain.repository.EducationRepository;
 import com.sojka.employeemanager.employee.dto.EducationDto;
 import com.sojka.employeemanager.employee.utils.EducationMapper;
-import com.sojka.employeemanager.infrastructure.employee.dto.SampleEducationDegreeDto;
+import com.sojka.employeemanager.employee.dto.SampleEducationDegreeDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

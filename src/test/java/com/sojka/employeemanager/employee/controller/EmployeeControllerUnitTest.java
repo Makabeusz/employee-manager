@@ -1,22 +1,21 @@
-package com.sojka.employeemanager.infrastructure.employee.controller;
+package com.sojka.employeemanager.employee.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
-import com.sojka.employeemanager.employee.controller.EmployeeController;
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.utils.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
-import com.sojka.employeemanager.infrastructure.InMemoryTestDatabase;
+import com.sojka.employeemanager.InMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
 import com.sojka.employeemanager.employee.domain.service.EmployeeService;
 import com.sojka.employeemanager.employee.domain.service.EmployeeServiceImpl;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
-import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployee;
-import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployeeDto;
+import com.sojka.employeemanager.employee.dto.SampleEmployee;
+import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -1,12 +1,11 @@
-package com.sojka.employeemanager.infrastructure.employee.domain.service;
+package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.employee.domain.Employee;
 import com.sojka.employeemanager.employee.utils.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicateEmployeeException;
 import com.sojka.employeemanager.employee.domain.repository.EmployeeRepository;
-import com.sojka.employeemanager.employee.domain.service.EmployeeService;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
-import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployeeDto;
+import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,10 +81,11 @@ class EmployeeServiceIntegrationContainerTest implements SampleEmployeeDto {
 
         // when
         EmployeeDto saved = service.addEmployee(newEmployee);
-        Optional<Employee> actual = repository.findEmployeeByPersonalId(saved.getPersonalId());
+        Employee actual = repository.findEmployeeByPersonalId(saved.getPersonalId())
+                .orElseThrow();
 
         // then
-        assertThat(EmployeeMapper.toEmployeeDto(actual.get())).isEqualTo(saved);
+        assertThat(EmployeeMapper.toEmployeeDto(actual)).isEqualTo(saved);
     }
 
     @Test

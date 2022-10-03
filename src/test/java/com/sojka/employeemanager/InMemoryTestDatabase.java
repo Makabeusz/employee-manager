@@ -1,7 +1,7 @@
-package com.sojka.employeemanager.infrastructure;
+package com.sojka.employeemanager;
 
 import com.sojka.employeemanager.employee.domain.DomainObject;
-import com.sojka.employeemanager.infrastructure.employee.dto.SampleEmployee;
+import com.sojka.employeemanager.employee.dto.SampleEmployee;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class InMemoryTestDatabase<T extends DomainObject> implements SampleEmplo
             if (this.objects.containsValue(object)) {
                 T duplicate = this.objects.values().stream()
                         .filter(e -> e.getObjectId().equals(object.getObjectId()))
-                        .findFirst().get();
+                        .findFirst().orElseThrow();
                 throw new DuplicateKeyException(duplicate.toString());
             }
             this.objects.put(this.objects.size(), object);

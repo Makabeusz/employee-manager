@@ -1,4 +1,4 @@
-package com.sojka.employeemanager.infrastructure.employee.dto;
+package com.sojka.employeemanager.employee.dto;
 
 import com.sojka.employeemanager.employee.domain.Education;
 

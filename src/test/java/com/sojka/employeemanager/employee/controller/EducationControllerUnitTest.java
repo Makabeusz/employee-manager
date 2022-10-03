@@ -1,4 +1,4 @@
-package com.sojka.employeemanager.infrastructure.employee.controller;
+package com.sojka.employeemanager.employee.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,15 +8,14 @@ import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedEducationException;
 import com.sojka.employeemanager.employee.domain.exceptions.EducationControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException;
-import com.sojka.employeemanager.infrastructure.InMemoryTestDatabase;
+import com.sojka.employeemanager.InMemoryTestDatabase;
 import com.sojka.employeemanager.employee.domain.Education;
 import com.sojka.employeemanager.employee.utils.EducationMapper;
 import com.sojka.employeemanager.employee.domain.repository.EducationRepository;
 import com.sojka.employeemanager.employee.domain.service.EducationService;
 import com.sojka.employeemanager.employee.dto.EducationDto;
-import com.sojka.employeemanager.infrastructure.employee.dto.SampleEducationDegree;
-import com.sojka.employeemanager.infrastructure.employee.dto.SampleEducationDegreeDto;
-import com.sojka.employeemanager.employee.controller.EducationController;
+import com.sojka.employeemanager.employee.dto.SampleEducationDegree;
+import com.sojka.employeemanager.employee.dto.SampleEducationDegreeDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

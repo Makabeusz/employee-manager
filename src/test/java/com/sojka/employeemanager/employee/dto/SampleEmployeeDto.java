@@ -1,7 +1,6 @@
-package com.sojka.employeemanager.infrastructure.employee.dto;
+package com.sojka.employeemanager.employee.dto;
 
 import com.sojka.employeemanager.employee.utils.EmployeeMapper;
-import com.sojka.employeemanager.employee.dto.EmployeeDto;
 
 import java.util.List;
 

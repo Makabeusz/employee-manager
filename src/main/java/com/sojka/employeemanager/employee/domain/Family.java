@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Family {
+public class Family implements DomainObject {
 
     private String id;
     private String firstName;
@@ -14,4 +14,8 @@ public class Family {
     private String kinship;
     private String birthDate;
 
+    @Override
+    public String getObjectId() {
+        return this.id + " " + this.firstName + " " + this.kinship;
+    }
 }
