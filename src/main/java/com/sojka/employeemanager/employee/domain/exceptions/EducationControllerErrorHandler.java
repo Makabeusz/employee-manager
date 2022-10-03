@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class EducationControllerErrorHandler {
 
-    @ExceptionHandler(DuplicateKeyException.class)
+    @ExceptionHandler({DuplicateKeyException.class, DuplicatedEducationException.class})
     ResponseEntity<EmployeeErrorResponse> handleDuplicateEmployeeException(DuplicateKeyException e) {
-        String message = "Employee already have such degree: " + e.getMessage();
+        String message = "The employee already have such degree: " + e.getMessage();
         EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.CONFLICT);
         log.warn(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
@@ -22,8 +22,9 @@ public class EducationControllerErrorHandler {
 
     @ExceptionHandler(NoEducationException.class)
     ResponseEntity<EmployeeErrorResponse> handleNoEducationException(NoEducationException e) {
-        String message = "Employee with ID " + e.getMessage() + " have no university degree.";
+        String message = "The employee with ID " + e.getMessage() + " have no university degree.";
         EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
+
 }

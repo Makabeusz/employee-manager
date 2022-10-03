@@ -37,7 +37,7 @@ public interface SampleEducationDegree {
                 .build();
     }
 
-    default Education newSecondEmployeeEducation() {
+    default Education newSecondEmployeeBachelorEducation() {
         return Education.builder()
                 .id("2")
                 .degree("Bachelor")

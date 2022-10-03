@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedEducationException;
 import com.sojka.employeemanager.employee.domain.exceptions.EducationControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.NoEducationException;
 import com.sojka.employeemanager.infrastructure.InMemoryTestDatabase;
@@ -16,12 +17,12 @@ import com.sojka.employeemanager.employee.dto.EducationDto;
 import com.sojka.employeemanager.infrastructure.employee.dto.SampleEducationDegree;
 import com.sojka.employeemanager.infrastructure.employee.dto.SampleEducationDegreeDto;
 import com.sojka.employeemanager.employee.controller.EducationController;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,8 +37,8 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EducationController.class)
@@ -50,45 +51,65 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
     private ObjectMapper mapper;
 
     final String FIRST_EMPLOYEE_ID = "1";
+    final String EMPLOYEE_WITHOUT_DEGREE = "3";
 
     @Test
     void should_return_all_employee_degrees() throws Exception {
-        // given
         List<EducationDto> firstEmployeeDegrees = List.of(firstEmployeeBachelorDegreeDto(),
                 firstEmployeeMasterDegreeDto());
 
-        // when
         MvcResult result = mockMvc.perform(get("/employees/" + FIRST_EMPLOYEE_ID + "/education/"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // then
         assertThat(listBodyOf(result))
                 .containsExactlyInAnyOrderElementsOf(firstEmployeeDegrees);
     }
 
     @Test
     void should_get_employee_most_recent_degree() throws Exception {
-        // given
         String firstEmployeeHighestDegree = "\"degree\":\"Master\"";
 
-        // when / then
         mockMvc.perform(get("/employees/" + FIRST_EMPLOYEE_ID + "/education/recent"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(Matchers.containsString(firstEmployeeHighestDegree)));
+                .andExpect(answerContains(firstEmployeeHighestDegree));
     }
 
     @Test
     void should_return_204_for_employee_without_university_degree() throws Exception {
-        // given
-        String employeeWithoutDegree = "100";
-
-        // when
-        mockMvc.perform(get("/employees/" + employeeWithoutDegree + "/education/recent"))
+        mockMvc.perform(get("/employees/" + EMPLOYEE_WITHOUT_DEGREE + "/education/recent"))
                 .andDo(print())
                 .andExpect(noContentStatus());
+    }
+
+    @Test
+    void should_correctly_save_new_degree_for_employee() throws Exception {
+        String bachelorDegree = "\"degree\":\"Bachelor\"";
+
+        mockMvc.perform(post("/employees/" + EMPLOYEE_WITHOUT_DEGREE + "/education")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bachelorDegree()))
+                .andDo(print())
+                .andExpect(createdStatus())
+                .andExpect(answerContains(bachelorDegree));
+    }
+
+    @Test
+    void should_throw_DuplicatedEducationException_for_add_duplicate_degree_attempt() throws Exception {
+        String duplicatedDegree = mapper.writeValueAsString(firstEmployeeMasterDegree());
+
+        mockMvc.perform(post("/employees/" + FIRST_EMPLOYEE_ID + "/education")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(duplicatedDegree))
+                .andDo(print())
+                .andExpect(conflictStatus())
+                .andExpect(answerContains("The employee already have such degree"));
+    }
+
+    private String bachelorDegree() throws JsonProcessingException {
+        return mapper.writeValueAsString(newSecondEmployeeBachelorEducation());
     }
 
     private List<EducationDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -128,8 +149,13 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
 
                 @Override
                 public EducationDto addEmployeeDegree(EducationDto educationDto) {
-                    return null;
-                    // TODO: unit tests here
+                    Education education = EducationMapper.toEducation(educationDto);
+                    List<Education> allObjects = repository.findAllObjects();
+                    for (Education object : allObjects) {
+                        if (object.equals(education)) throw new DuplicatedEducationException(object.toString());
+                    }
+                    return EducationMapper.toEducationDto(
+                            repository.saveObject(education));
                 }
             };
         }
