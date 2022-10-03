@@ -8,7 +8,12 @@ import java.util.List;
 @Service
 public class FamilyServiceImpl implements FamilyService {
     @Override
-    public List<FamilyDto> getAllFamilyMembers(String id) {
+    public List<FamilyDto> getAllFamily(String id) {
+        return null;
+    }
+
+    @Override
+    public List<FamilyDto> getAllChildren(String id) {
         return null;
     }
 }

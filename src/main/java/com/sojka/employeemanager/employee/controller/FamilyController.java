@@ -20,7 +20,12 @@ public class FamilyController {
 
     @GetMapping
     public ResponseEntity<List<FamilyDto>> getAllFamily(@PathVariable("employee-id") String id) {
-        return ResponseEntity.ok(service.getAllFamilyMembers(id));
+        return ResponseEntity.ok(service.getAllFamily(id));
+    }
+
+    @GetMapping("/children")
+    public ResponseEntity<List<FamilyDto>> getAllChildren(@PathVariable("employee-id") String id) {
+        return ResponseEntity.ok(service.getAllChildren(id));
     }
 
 }
