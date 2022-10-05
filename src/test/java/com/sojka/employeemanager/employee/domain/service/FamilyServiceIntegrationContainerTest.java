@@ -64,6 +64,8 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
         assertThat(actualChildren).isEmpty();
     }
 
+
+
     @Import(EmployeeManagerApplication.class)
     static class TestConfig {
 

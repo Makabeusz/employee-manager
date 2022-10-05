@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.employee.domain.service;
 
+import com.sojka.employeemanager.employee.domain.Family;
 import com.sojka.employeemanager.employee.domain.repository.FamilyRepository;
 import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.utils.FamilyMapper;
@@ -31,6 +32,9 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Override
     public FamilyDto addFamilyMember(FamilyDto familyMember) {
-        return null;//TODO: integration test
+        Family family = FamilyMapper.toFamily(familyMember);
+        return FamilyMapper.toFamilyDto(
+                repository.save(family));//TODO: integration test
+
     }
 }

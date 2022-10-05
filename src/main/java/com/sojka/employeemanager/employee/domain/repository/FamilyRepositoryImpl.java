@@ -39,4 +39,37 @@ public class FamilyRepositoryImpl implements FamilyRepository {
                 BeanPropertyRowMapper.newInstance(Family.class),
                 id);
     }
+
+    @Override
+    public Family save(Family familyMember) {
+        String sql = "INSERT INTO family (id, first_name, second_name, last_name, birth_date, kinship) " +
+                "VALUE (?, ?, ?, ?, ?, ? )";
+        jdbcTemplate.update(sql,
+                familyMember.getId(),
+                familyMember.getFirstName(),
+                familyMember.getSecondName(),
+                familyMember.getLastName(),
+                familyMember.getBirthDate(),
+                familyMember.getKinship());
+        return findFamilyMember(familyMember);
+    }
+
+    public Family findFamilyMember(Family familyMember) {
+        String sql = "SELECT * " +
+                "FROM family " +
+                "WHERE id = ? " +
+                "AND first_name = ? " +
+                "AND second_name = ? " +
+                "AND last_name = ? " +
+                "AND birth_date = ? " +
+                "AND kinship = ? ";
+        return jdbcTemplate.queryForObject(sql,
+                BeanPropertyRowMapper.newInstance(Family.class),
+                familyMember.getId(),
+                familyMember.getFirstName(),
+                familyMember.getSecondName(),
+                familyMember.getLastName(),
+                familyMember.getBirthDate(),
+                familyMember.getKinship());
+    }
 }
