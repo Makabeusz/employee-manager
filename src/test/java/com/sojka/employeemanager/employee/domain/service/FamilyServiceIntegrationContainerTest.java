@@ -64,12 +64,12 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
 
     @Test
     void should_correctly_add_new_employee_family_member() {
-        FamilyDto newSecondEmployeeChild = newSecondEmployeeChildDto();
+        FamilyDto newSecondEmployeeChild = newSecondEmployeeAdultChildDto();
 
         service.addFamilyMember(newSecondEmployeeChild);
 
         assertThat(service.getAllChildren(SECOND_EMPLOYEE_WITH_WIFE))
-                .contains(newSecondEmployeeChildDto());
+                .contains(newSecondEmployeeAdultChildDto());
     }
 
     @Test

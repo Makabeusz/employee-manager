@@ -10,4 +10,9 @@ public interface FamilyService {
     List<FamilyDto> getAllChildren(String id);
 
     FamilyDto addFamilyMember(FamilyDto familyMember);
+
+    List<FamilyDto> getAllUnderageChildren(String id);
+
+    List<FamilyDto> getAllUnderageChildren(String id, String date);
+
 }

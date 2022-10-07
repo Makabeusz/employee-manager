@@ -14,7 +14,6 @@ import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamily;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamilyDto;
 import com.sojka.employeemanager.employee.utils.FamilyMapper;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FamilyController.class)
@@ -45,15 +46,15 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     @Autowired
     private ObjectMapper mapper;
 
-    final String EMPLOYEE_WITH_WIFE_AND_CHILD = "1";
-    final String EMPLOYEE_WITH_WIFE = "2";
-    final String EMPLOYEE_WITH_NO_FAMILY_ID = "3";
+    final String FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD = "1";
+    final String SECOND_EMPLOYEE_WITH_WIFE_AND_NEWBORN = "2";
+    final String THIRD_EMPLOYEE_WITH_NO_FAMILY = "3";
 
     @Test
     void should_return_all_employee_family_members() throws Exception {
         List<FamilyDto> actualFamily = List.of(firstEmployeeWifeDto(), firstEmployeeChildDto());
 
-        MvcResult result = mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_WIFE_AND_CHILD + "/family"))
+        MvcResult result = mockMvc.perform(get("/employee/" + FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD + "/family"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -66,7 +67,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     void should_return_empty_list_if_employee_has_no_family() throws Exception {
         String emptyList = "[]";
 
-        mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_NO_FAMILY_ID + "/family"))
+        mockMvc.perform(get("/employee/" + THIRD_EMPLOYEE_WITH_NO_FAMILY + "/family"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(answerContains(emptyList));
@@ -76,7 +77,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     void should_return_all_employee_children() throws Exception {
         List<FamilyDto> actualChildren = List.of(firstEmployeeChildDto());
 
-        MvcResult result = mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_WIFE_AND_CHILD + "/family/children"))
+        MvcResult result = mockMvc.perform(get("/employee/" + FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD + "/family/children"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -89,7 +90,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     void should_return_empty_list_if_employee_has_no_children() throws Exception {
         String emptyList = "[]";
 
-        mockMvc.perform(get("/employee/" + EMPLOYEE_WITH_WIFE + "/family/children"))
+        mockMvc.perform(get("/employee/" + THIRD_EMPLOYEE_WITH_NO_FAMILY + "/family/children"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(answerContains(emptyList));
@@ -97,9 +98,9 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
 
     @Test
     void should_correctly_add_new_family_member() throws Exception {
-        String newChild = mapper.writeValueAsString(newSecondEmployeeChildDto());
+        String newChild = mapper.writeValueAsString(newSecondEmployeeAdultChildDto());
 
-        mockMvc.perform(post("/employee/" + EMPLOYEE_WITH_WIFE + "/family")
+        mockMvc.perform(post("/employee/" + SECOND_EMPLOYEE_WITH_WIFE_AND_NEWBORN + "/family")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newChild))
                 .andDo(print())
@@ -112,13 +113,35 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
         String duplicate = mapper.writeValueAsString(firstEmployeeChildDto());
         String duplicateMessage = "The employee family member already exists";
 
-        mockMvc.perform(post("/employee/" + EMPLOYEE_WITH_WIFE + "/family")
+        mockMvc.perform(post("/employee/" + SECOND_EMPLOYEE_WITH_WIFE_AND_NEWBORN + "/family")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(duplicate))
                 .andDo(print())
                 .andExpect(conflictStatus())
                 .andExpect(answerContains(duplicateMessage));
     }
+
+    @Test
+    void should_return_only_all_underage_children_if_they_exists() throws Exception {
+        String newbornChildOnly = "[" + mapper.writeValueAsString(secondEmployeeNewbornChildDto()) + "]";
+
+        mockMvc.perform(get("/employee/" + SECOND_EMPLOYEE_WITH_WIFE_AND_NEWBORN + "/family/underage-children"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(newbornChildOnly));
+    }
+
+    @Test
+    void should_return_empty_list_if_no_underage_children_exists() throws Exception {
+        String emptyList = "[]";
+
+        mockMvc.perform(get("/employee/" + FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD + "/family/underage-children"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(emptyList));
+    }
+
+
 
     private List<FamilyDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
         String content = mvcResult.getResponse().getContentAsString();
@@ -130,7 +153,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     static class MockMvcConfig implements SampleEmployeeFamily {
 
         private final InMemoryTestDatabase<Family> repository =
-                InMemoryTestDatabase.of(firstEmployeeWife(), firstEmployeeChild(), secondEmployeeWife());
+                InMemoryTestDatabase.of(firstEmployeeWife(), firstEmployeeChild(), secondEmployeeWife(), secondEmployeeNewbornChild());
 
         @Bean
         FamilyService familyService() {
@@ -158,6 +181,19 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                     if (repository.exists(family.getObjectId())) throw new DuplicatedFamilyException(family.toString());
                     return FamilyMapper.toFamilyDto(
                             repository.saveObject(family));
+                }
+
+                @Override
+                public List<FamilyDto> getAllUnderageChildren(String id) {
+                    return getAllChildren(id).stream()
+                            .filter(child -> LocalDate.parse(child.getBirthDate()).isEqual(LocalDate.now()) ||
+                                    LocalDate.parse(child.getBirthDate()).isAfter(LocalDate.now()))
+                            .collect(Collectors.toList());
+                }
+
+                @Override
+                public List<FamilyDto> getAllUnderageChildren(String id, String date) {
+                    return null;
                 }
             };
         }

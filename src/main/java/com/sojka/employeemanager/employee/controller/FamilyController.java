@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -33,6 +34,12 @@ public class FamilyController {
     @PostMapping
     public ResponseEntity<FamilyDto> addFamilyMember(@PathVariable("employee-id") String id, @RequestBody FamilyDto familyMember) {
         return ResponseEntity.ok(service.addFamilyMember(familyMember));
+    }
+
+    @GetMapping("/underage-children")
+    public ResponseEntity<List<FamilyDto>> getAllUnderageChildren(@PathVariable("employee-id") String id, @RequestParam(required = false) String date) {
+        if (date != null) return ResponseEntity.ok(service.getAllUnderageChildren(id, date));
+        return ResponseEntity.ok(service.getAllUnderageChildren(id));
     }
 
 }

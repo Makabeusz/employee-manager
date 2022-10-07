@@ -2,6 +2,9 @@ package com.sojka.employeemanager.employee.dto;
 
 import com.sojka.employeemanager.employee.domain.Family;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public interface SampleEmployeeFamily {
 
     default Family firstEmployeeWife() {
@@ -37,13 +40,24 @@ public interface SampleEmployeeFamily {
                 .build();
     }
 
-    default Family newSecondEmployeeChild() {
+    default Family newSecondEmployeeAdultChild() {
         return Family.builder()
                 .id("2")
                 .firstName("Julia")
                 .secondName(null)
                 .lastName("Wayne")
                 .birthDate("1946-08-01")
+                .kinship("child")
+                .build();
+    }
+
+    default Family secondEmployeeNewbornChild() {
+        return Family.builder()
+                .id("2")
+                .firstName("Stan")
+                .secondName(null)
+                .lastName("Wayne")
+                .birthDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
                 .kinship("child")
                 .build();
     }
