@@ -42,8 +42,9 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Override
     public List<FamilyDto> getAllUnderageChildren(String id, String date) {
-        return null;
-        // TODO: Integration tests
+        return repository.findAllUnderageChildren(id, date).stream()
+                .map(FamilyMapper::toFamilyDto)
+                .collect(Collectors.toList());
     }
 
 

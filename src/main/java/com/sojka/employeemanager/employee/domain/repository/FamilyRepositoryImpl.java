@@ -92,4 +92,16 @@ public class FamilyRepositoryImpl implements FamilyRepository {
                 familyMember.getBirthDate(),
                 familyMember.getKinship());
     }
+
+    @Override
+    public List<Family> findAllUnderageChildren(String id, String date) {
+        String sql = "SELECT * " +
+                "FROM family " +
+                "WHERE id = ? " +
+                "AND kinship = 'child' " +
+                "AND date_add(birth_date, INTERVAL 18 YEAR) > ?;";
+        return jdbcTemplate.query(sql,
+                BeanPropertyRowMapper.newInstance(Family.class),
+                id, date);
+    }
 }

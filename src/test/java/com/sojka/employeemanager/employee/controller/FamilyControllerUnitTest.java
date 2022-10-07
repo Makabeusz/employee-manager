@@ -144,11 +144,11 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
 
     @Test
     void should_return_all_underage_children_up_to_given_date_parameter() throws Exception {
-        String firstEmployeeChildDayBeforeEighteenBirthday = "1998-06-11";
+        String dayBeforeEighteenBirthday = "1998-06-11";
         String firstEmployeeChildOnly = "[" + mapper.writeValueAsString(firstEmployeeChildDto()) + "]";
 
         mockMvc.perform(get("/employee/" + FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD +
-                        "/family/underage-children/?beforeDate={date}", firstEmployeeChildDayBeforeEighteenBirthday))
+                        "/family/underage-children/?beforeDate={date}", dayBeforeEighteenBirthday))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(firstEmployeeChildOnly));

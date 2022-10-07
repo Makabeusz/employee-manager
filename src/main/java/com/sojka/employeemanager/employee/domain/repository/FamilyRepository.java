@@ -16,4 +16,6 @@ public interface FamilyRepository {
     Optional<Family> findFamilyMember(Family familyMember);
 
     boolean exists(Family familyMember);
+
+    List<Family> findAllUnderageChildren(String id, String date);
 }

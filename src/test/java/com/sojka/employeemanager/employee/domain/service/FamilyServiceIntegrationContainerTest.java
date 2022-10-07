@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +26,7 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
     @Autowired
     private FamilyService service;
 
-    final String FIRST_EMPLOYEE_WITH_WIFE_AND_CHILD = "1";
+    final String FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD = "1";
     final String SECOND_EMPLOYEE_WITH_WIFE = "2";
     final String THIRD_EMPLOYEE_WITH_NO_FAMILY = "3";
 
@@ -32,7 +34,7 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
     void should_return_all_employee_family() {
         List<FamilyDto> expectedFamily = List.of(firstEmployeeWifeDto(), firstEmployeeChildDto());
 
-        List<FamilyDto> actualFamily = service.getAllFamily(FIRST_EMPLOYEE_WITH_WIFE_AND_CHILD);
+        List<FamilyDto> actualFamily = service.getAllFamily(FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD);
 
         assertThat(actualFamily)
                 .containsExactlyInAnyOrderElementsOf(expectedFamily);
@@ -49,7 +51,7 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
     void should_return_all_employee_children() {
         List<FamilyDto> expectedChildren = List.of(firstEmployeeChildDto());
 
-        List<FamilyDto> actualChildren = service.getAllChildren(FIRST_EMPLOYEE_WITH_WIFE_AND_CHILD);
+        List<FamilyDto> actualChildren = service.getAllChildren(FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD);
 
         assertThat(actualChildren)
                 .containsExactlyInAnyOrderElementsOf(expectedChildren);
@@ -79,6 +81,26 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
         Exception exception = catchException(() -> service.addFamilyMember(duplicate));
 
         assertThat(exception).isInstanceOf(DuplicatedFamilyException.class);
+    }
+
+    @Test
+    void should_return_all_underage_children_of_the_employee_with_fixed_date_parameter() {
+        List<FamilyDto> expectedChildren = List.of(firstEmployeeChildDto());
+        String dayBeforeEighteenBirthday = "1998-06-11";
+
+        List<FamilyDto> actualChildren = service.getAllUnderageChildren(FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD
+                , dayBeforeEighteenBirthday);
+
+        assertThat(actualChildren)
+                .containsExactlyElementsOf(expectedChildren);
+    }
+
+    @Test
+    void should_return_empty_list_if_all_children_are_adults_with_default_today_date() {
+        List<FamilyDto> actualChildren = service.getAllUnderageChildren(FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD
+                , new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+        assertThat(actualChildren).isEmpty();
     }
 
     @Import(EmployeeManagerApplication.class)
