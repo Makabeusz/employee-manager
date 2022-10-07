@@ -39,9 +39,9 @@ public class FamilyController {
     }
 
     @GetMapping("/underage-children")
-    public ResponseEntity<List<FamilyDto>> getAllUnderageChildren(@PathVariable("employee-id") String id, @RequestParam(defaultValue = "today") String date) {
-        if (date.equals("today")) date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        return ResponseEntity.ok(service.getAllUnderageChildren(id, date));
+    public ResponseEntity<List<FamilyDto>> getAllUnderageChildren(@PathVariable("employee-id") String id, @RequestParam(defaultValue = "today") String beforeDate) {
+        if (beforeDate.equals("today")) beforeDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        return ResponseEntity.ok(service.getAllUnderageChildren(id, beforeDate));
     }
 
 }

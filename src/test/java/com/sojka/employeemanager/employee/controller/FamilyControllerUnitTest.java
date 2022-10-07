@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -142,8 +143,15 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
     }
 
     @Test
-    void should_return_all_underage_children_up_to_given_date_parameter() {
+    void should_return_all_underage_children_up_to_given_date_parameter() throws Exception {
+        String firstEmployeeChildDayBeforeEighteenBirthday = "1998-06-11";
+        String firstEmployeeChildOnly = "[" + mapper.writeValueAsString(firstEmployeeChildDto()) + "]";
 
+        mockMvc.perform(get("/employee/" + FIRST_EMPLOYEE_WITH_WIFE_AND_ADULT_CHILD +
+                        "/family/underage-children/?beforeDate={date}", firstEmployeeChildDayBeforeEighteenBirthday))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(firstEmployeeChildOnly));
     }
 
     private List<FamilyDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -189,8 +197,8 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                 @Override
                 public List<FamilyDto> getAllUnderageChildren(String id, String date) {
                     return getAllChildren(id).stream()
-                            .filter(child -> LocalDate.parse(child.getBirthDate()).isEqual(LocalDate.now()) ||
-                                    LocalDate.parse(child.getBirthDate()).isAfter(LocalDate.parse(date)))
+                            .filter(child -> LocalDate.parse(child.getBirthDate()).plus(18, ChronoUnit.YEARS).isEqual(LocalDate.parse(date)) ||
+                                    LocalDate.parse(child.getBirthDate()).plus(18, ChronoUnit.YEARS).isAfter(LocalDate.parse(date)))
                             .collect(Collectors.toList());
                 }
             };
