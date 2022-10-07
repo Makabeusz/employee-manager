@@ -11,8 +11,6 @@ public interface FamilyService {
 
     FamilyDto addFamilyMember(FamilyDto familyMember);
 
-    List<FamilyDto> getAllUnderageChildren(String id);
-
     List<FamilyDto> getAllUnderageChildren(String id, String date);
 
 }

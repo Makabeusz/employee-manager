@@ -141,7 +141,10 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                 .andExpect(content().string(emptyList));
     }
 
+    @Test
+    void should_return_all_underage_children_up_to_given_date_parameter() {
 
+    }
 
     private List<FamilyDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
         String content = mvcResult.getResponse().getContentAsString();
@@ -184,16 +187,11 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                 }
 
                 @Override
-                public List<FamilyDto> getAllUnderageChildren(String id) {
+                public List<FamilyDto> getAllUnderageChildren(String id, String date) {
                     return getAllChildren(id).stream()
                             .filter(child -> LocalDate.parse(child.getBirthDate()).isEqual(LocalDate.now()) ||
-                                    LocalDate.parse(child.getBirthDate()).isAfter(LocalDate.now()))
+                                    LocalDate.parse(child.getBirthDate()).isAfter(LocalDate.parse(date)))
                             .collect(Collectors.toList());
-                }
-
-                @Override
-                public List<FamilyDto> getAllUnderageChildren(String id, String date) {
-                    return null;
                 }
             };
         }

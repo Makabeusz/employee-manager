@@ -41,12 +41,6 @@ public class FamilyServiceImpl implements FamilyService {
     }
 
     @Override
-    public List<FamilyDto> getAllUnderageChildren(String id) {
-        return null;
-        // TODO: Integration tests
-    }
-
-    @Override
     public List<FamilyDto> getAllUnderageChildren(String id, String date) {
         return null;
         // TODO: Integration tests

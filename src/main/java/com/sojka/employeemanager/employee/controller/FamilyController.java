@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -37,9 +39,9 @@ public class FamilyController {
     }
 
     @GetMapping("/underage-children")
-    public ResponseEntity<List<FamilyDto>> getAllUnderageChildren(@PathVariable("employee-id") String id, @RequestParam(required = false) String date) {
-        if (date != null) return ResponseEntity.ok(service.getAllUnderageChildren(id, date));
-        return ResponseEntity.ok(service.getAllUnderageChildren(id));
+    public ResponseEntity<List<FamilyDto>> getAllUnderageChildren(@PathVariable("employee-id") String id, @RequestParam(defaultValue = "today") String date) {
+        if (date.equals("today")) date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        return ResponseEntity.ok(service.getAllUnderageChildren(id, date));
     }
 
 }
