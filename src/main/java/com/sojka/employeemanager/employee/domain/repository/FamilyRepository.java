@@ -3,6 +3,7 @@ package com.sojka.employeemanager.employee.domain.repository;
 import com.sojka.employeemanager.employee.domain.Family;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FamilyRepository {
 
@@ -12,5 +13,7 @@ public interface FamilyRepository {
 
     Family save(Family familyMember);
 
-    Family findFamilyMember(Family familyMember);
+    Optional<Family> findFamilyMember(Family familyMember);
+
+    boolean exists(Family familyMember);
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class FamilyRepositoryImpl implements FamilyRepository {
@@ -40,6 +41,7 @@ public class FamilyRepositoryImpl implements FamilyRepository {
                 id);
     }
 
+
     @Override
     public Family save(Family familyMember) {
         String sql = "INSERT INTO family (id, first_name, second_name, last_name, birth_date, kinship) " +
@@ -51,23 +53,41 @@ public class FamilyRepositoryImpl implements FamilyRepository {
                 familyMember.getLastName(),
                 familyMember.getBirthDate(),
                 familyMember.getKinship());
-        return findFamilyMember(familyMember);
+        return findFamilyMember(familyMember).orElseThrow();
     }
 
-    public Family findFamilyMember(Family familyMember) {
+    public Optional<Family> findFamilyMember(Family familyMember) {
         String sql = "SELECT * " +
                 "FROM family " +
                 "WHERE id = ? " +
                 "AND first_name = ? " +
-                "AND second_name = ? " +
                 "AND last_name = ? " +
                 "AND birth_date = ? " +
                 "AND kinship = ? ";
-        return jdbcTemplate.queryForObject(sql,
+        List<Family> family = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Family.class),
                 familyMember.getId(),
                 familyMember.getFirstName(),
-                familyMember.getSecondName(),
+                familyMember.getLastName(),
+                familyMember.getBirthDate(),
+                familyMember.getKinship());
+        return family.isEmpty() ? Optional.empty() : Optional.of(family.get(0));
+    }
+
+    @Override
+    public boolean exists(Family familyMember) {
+        String sql = "SELECT CASE WHEN EXISTS (" +
+                "SELECT * FROM family " +
+                "WHERE id = ? " +
+                "AND first_name = ? " +
+                "AND last_name = ? " +
+                "AND birth_date = ? " +
+                "AND kinship = ? )" +
+                "THEN true ELSE false END AS boolean";
+        return 1 == jdbcTemplate.queryForObject(sql,
+                (rs, rowNum) -> rs.getInt("boolean"),
+                familyMember.getId(),
+                familyMember.getFirstName(),
                 familyMember.getLastName(),
                 familyMember.getBirthDate(),
                 familyMember.getKinship());

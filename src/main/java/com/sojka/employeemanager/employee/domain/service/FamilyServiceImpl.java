@@ -1,6 +1,7 @@
 package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.employee.domain.Family;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedFamilyException;
 import com.sojka.employeemanager.employee.domain.repository.FamilyRepository;
 import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.utils.FamilyMapper;
@@ -33,8 +34,9 @@ public class FamilyServiceImpl implements FamilyService {
     @Override
     public FamilyDto addFamilyMember(FamilyDto familyMember) {
         Family family = FamilyMapper.toFamily(familyMember);
+        if (repository.exists(family)) throw new DuplicatedFamilyException(familyMember.toString());
         return FamilyMapper.toFamilyDto(
-                repository.save(family));//TODO: integration test
+                repository.save(family));
 
     }
 }

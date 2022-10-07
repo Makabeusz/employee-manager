@@ -1,7 +1,7 @@
 package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.EmployeeManagerApplication;
-import com.sojka.employeemanager.employee.domain.repository.FamilyRepository;
+import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedFamilyException;
 import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamilyDto;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.assertj.core.api.Assertions.catchException;
 
 @Testcontainers
 @SpringBootTest(classes = FamilyServiceIntegrationContainerTest.TestConfig.class)
@@ -23,26 +23,24 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
 
     @Autowired
     private FamilyService service;
-    @Autowired
-    private FamilyRepository repository;
 
-    final String EMPLOYEE_WITH_WIFE_AND_CHILD = "1";
-    final String EMPLOYEE_WITH_WIFE = "2";
-    final String EMPLOYEE_WITH_NO_FAMILY = "3";
+    final String FIRST_EMPLOYEE_WITH_WIFE_AND_CHILD = "1";
+    final String SECOND_EMPLOYEE_WITH_WIFE = "2";
+    final String THIRD_EMPLOYEE_WITH_NO_FAMILY = "3";
 
     @Test
     void should_return_all_employee_family() {
         List<FamilyDto> expectedFamily = List.of(firstEmployeeWifeDto(), firstEmployeeChildDto());
 
-        List<FamilyDto> actualFamily = service.getAllFamily(EMPLOYEE_WITH_WIFE_AND_CHILD);
+        List<FamilyDto> actualFamily = service.getAllFamily(FIRST_EMPLOYEE_WITH_WIFE_AND_CHILD);
 
         assertThat(actualFamily)
-                .containsExactlyInAnyOrderElementsOf(actualFamily);
+                .containsExactlyInAnyOrderElementsOf(expectedFamily);
     }
 
     @Test
     void should_return_empty_list_if_employee_has_no_family() {
-        List<FamilyDto> actualFamily = service.getAllFamily(EMPLOYEE_WITH_NO_FAMILY);
+        List<FamilyDto> actualFamily = service.getAllFamily(THIRD_EMPLOYEE_WITH_NO_FAMILY);
 
         assertThat(actualFamily).isEmpty();
     }
@@ -51,7 +49,7 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
     void should_return_all_employee_children() {
         List<FamilyDto> expectedChildren = List.of(firstEmployeeChildDto());
 
-        List<FamilyDto> actualChildren = service.getAllChildren(EMPLOYEE_WITH_WIFE_AND_CHILD);
+        List<FamilyDto> actualChildren = service.getAllChildren(FIRST_EMPLOYEE_WITH_WIFE_AND_CHILD);
 
         assertThat(actualChildren)
                 .containsExactlyInAnyOrderElementsOf(expectedChildren);
@@ -59,12 +57,29 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
 
     @Test
     void should_return_empty_list_if_employee_has_no_children() {
-        List<FamilyDto> actualChildren = service.getAllChildren(EMPLOYEE_WITH_NO_FAMILY);
+        List<FamilyDto> actualChildren = service.getAllChildren(THIRD_EMPLOYEE_WITH_NO_FAMILY);
 
         assertThat(actualChildren).isEmpty();
     }
 
+    @Test
+    void should_correctly_add_new_employee_family_member() {
+        FamilyDto newSecondEmployeeChild = newSecondEmployeeChildDto();
 
+        service.addFamilyMember(newSecondEmployeeChild);
+
+        assertThat(service.getAllChildren(SECOND_EMPLOYEE_WITH_WIFE))
+                .contains(newSecondEmployeeChildDto());
+    }
+
+    @Test
+    void should_throw_DuplicatedFamilyException_for_duplicated_child_adding_attempt() {
+        FamilyDto duplicate = firstEmployeeWifeDto();
+
+        Exception exception = catchException(() -> service.addFamilyMember(duplicate));
+
+        assertThat(exception).isInstanceOf(DuplicatedFamilyException.class);
+    }
 
     @Import(EmployeeManagerApplication.class)
     static class TestConfig {
