@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -171,6 +170,20 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                 .andExpect(status().isOk())
                 .andExpect(answerContains("Family member of employee with id 3 has been removed: "
                         + wronglyAddedThirdEmployeeChildDto().toString()));
+    }
+
+    @Test
+    void should_throw_NoFamilyException_on_deleting_non_existing_family_member_attempt() throws Exception {
+        FamilyDto nonExistingFamilyMember = wronglyAddedThirdEmployeeChildDto();
+        String jsonWithFamilyMemberDto = mapper.writeValueAsString(wronglyAddedThirdEmployeeChildDto());
+
+        mockMvc.perform(delete("/employees/" + THIRD_EMPLOYEE_WITH_NO_FAMILY + "/family/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonWithFamilyMemberDto))
+                .andDo(print())
+                .andExpect(conflictStatus())
+                .andExpect(answerContains("The family member cannot be deleted, because do not exists: "
+                        + nonExistingFamilyMember.toString()));
     }
 
     private List<FamilyDto> listBodyOf(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {

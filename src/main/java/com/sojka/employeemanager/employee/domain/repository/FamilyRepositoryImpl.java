@@ -104,4 +104,20 @@ public class FamilyRepositoryImpl implements FamilyRepository {
                 BeanPropertyRowMapper.newInstance(Family.class),
                 id, date);
     }
+
+    @Override
+    public void deleteFamilyMember(Family familyMember) {
+        String sql = "DELETE FROM family " +
+                "WHERE id = ? " +
+                "AND first_name = ? " +
+                "AND last_name = ? " +
+                "AND birth_date = ? " +
+                "AND kinship = ? ";
+        jdbcTemplate.update(sql,
+                familyMember.getId(),
+                familyMember.getFirstName(),
+                familyMember.getLastName(),
+                familyMember.getBirthDate(),
+                familyMember.getKinship());
+    }
 }

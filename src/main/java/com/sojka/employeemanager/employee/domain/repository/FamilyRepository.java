@@ -18,4 +18,6 @@ public interface FamilyRepository {
     boolean exists(Family familyMember);
 
     List<Family> findAllUnderageChildren(String id, String date);
+
+    void deleteFamilyMember(Family familyMember);
 }

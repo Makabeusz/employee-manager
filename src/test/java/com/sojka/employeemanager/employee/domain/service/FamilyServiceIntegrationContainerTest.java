@@ -2,6 +2,7 @@ package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.EmployeeManagerApplication;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedFamilyException;
+import com.sojka.employeemanager.employee.domain.exceptions.NoFamilyException;
 import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamilyDto;
 import org.junit.jupiter.api.Test;
@@ -101,6 +102,27 @@ class FamilyServiceIntegrationContainerTest implements SampleEmployeeFamilyDto {
                 , new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         assertThat(actualChildren).isEmpty();
+    }
+
+    @Test
+    void should_add_and_then_remove_family_member() {
+        FamilyDto wronglyAdded = wronglyAddedThirdEmployeeChildDto();
+        assertThat(service.getAllFamily(THIRD_EMPLOYEE_WITH_NO_FAMILY)).isEmpty();
+
+        service.addFamilyMember(wronglyAdded);
+        assertThat(service.getAllFamily(THIRD_EMPLOYEE_WITH_NO_FAMILY)).containsExactly(wronglyAdded);
+        service.deleteFamilyMember(wronglyAdded);
+
+        assertThat(service.getAllFamily(THIRD_EMPLOYEE_WITH_NO_FAMILY)).isEmpty();
+    }
+
+    @Test
+    void should_throw_NoFamilyException_on_deleting_non_existing_family_member_attempt() {
+        FamilyDto nonExistingFamilyMember = wronglyAddedThirdEmployeeChildDto();
+
+        Exception exception = catchException(() -> service.deleteFamilyMember(nonExistingFamilyMember));
+
+        assertThat(exception).isInstanceOf(NoFamilyException.class);
     }
 
     @Import(EmployeeManagerApplication.class)

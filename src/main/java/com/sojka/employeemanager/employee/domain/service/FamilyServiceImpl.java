@@ -2,6 +2,7 @@ package com.sojka.employeemanager.employee.domain.service;
 
 import com.sojka.employeemanager.employee.domain.Family;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedFamilyException;
+import com.sojka.employeemanager.employee.domain.exceptions.NoFamilyException;
 import com.sojka.employeemanager.employee.domain.repository.FamilyRepository;
 import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.utils.FamilyMapper;
@@ -49,7 +50,9 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Override
     public void deleteFamilyMember(FamilyDto familyMember) {
-        // TODO: integration tests / implementation
+        Family family = FamilyMapper.toFamily(familyMember);
+        if (!repository.exists(family)) throw new NoFamilyException(familyMember.toString());
+        repository.deleteFamilyMember(family);
     }
 
 
