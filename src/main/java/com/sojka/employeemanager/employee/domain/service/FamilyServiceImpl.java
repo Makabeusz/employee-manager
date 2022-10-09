@@ -47,5 +47,10 @@ public class FamilyServiceImpl implements FamilyService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteFamilyMember(FamilyDto familyMember) {
+        // TODO: integration tests / implementation
+    }
+
 
 }

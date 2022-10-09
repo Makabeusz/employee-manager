@@ -41,7 +41,7 @@ public class InMemoryTestDatabase<T extends DomainObject> implements SampleEmplo
 
     public boolean exists(String objectId) {
         return objects.values().stream()
-                .anyMatch(employee -> employee.getObjectId().equals(objectId));
+                .anyMatch(object -> object.getObjectId().equals(objectId));
     }
 
     public List<T> saveAllObjects(List<T> objects) {
@@ -57,5 +57,15 @@ public class InMemoryTestDatabase<T extends DomainObject> implements SampleEmplo
             saved.add(object);
         }
         return saved;
+    }
+
+    public void remove(String objectId) {
+        int key = 100;
+        for (Map.Entry<Integer, T> entry : objects.entrySet()) {
+            if (entry.getValue().getObjectId().equals(objectId))
+                key = entry.getKey();
+        }
+        if (key != 100)
+            objects.remove(key);
     }
 }

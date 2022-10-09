@@ -13,4 +13,5 @@ public interface FamilyService {
 
     List<FamilyDto> getAllUnderageChildren(String id, String date);
 
+    void deleteFamilyMember(FamilyDto familyMember);
 }

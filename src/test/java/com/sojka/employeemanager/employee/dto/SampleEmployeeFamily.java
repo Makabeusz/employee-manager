@@ -62,4 +62,15 @@ public interface SampleEmployeeFamily {
                 .build();
     }
 
+    default Family wronglyAddedThirdEmployeeChild() {
+        return Family.builder()
+                .id("3")
+                .firstName("Stephan")
+                .secondName("Robert")
+                .lastName("Broadus")
+                .birthDate("1998-03-30")
+                .kinship("child")
+                .build();
+    }
+
 }
