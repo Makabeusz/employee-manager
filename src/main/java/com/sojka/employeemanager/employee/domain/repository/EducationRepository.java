@@ -14,4 +14,6 @@ public interface EducationRepository {
     Education save(Education education);
 
     boolean exists(Education education);
+
+    void delete(Education education);
 }

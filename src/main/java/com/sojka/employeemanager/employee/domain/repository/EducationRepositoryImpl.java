@@ -78,6 +78,24 @@ public class EducationRepositoryImpl implements EducationRepository {
                 education.getFinishDate());
     }
 
+    @Override
+    public void delete(Education education) {
+        String sql = "DELETE FROM education " +
+                "WHERE id = ? " +
+                "AND degree = ? " +
+                "AND school_name = ? " +
+                "AND address = ? " +
+                "AND start_date = ? " +
+                "AND finish_date = ? ";
+        jdbcTemplate.update(sql,
+                education.getId(),
+                education.getDegree(),
+                education.getSchoolName(),
+                education.getAddress(),
+                education.getStartDate(),
+                education.getFinishDate());
+    }
+
     private Education findDegree(Education education) {
         String sql = "SELECT * " +
                 "FROM education " +

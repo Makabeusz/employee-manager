@@ -43,6 +43,8 @@ public class EducationServiceImpl implements EducationService {
 
     @Override
     public void deleteEmployeeDegree(EducationDto educationDto) {
-        // TODO: Integration tests / implementation
+        Education degree = EducationMapper.toEducation(educationDto);
+        if (!repository.exists(degree)) throw new NoEducationException(educationDto.toString());
+        repository.delete(degree);
     }
 }

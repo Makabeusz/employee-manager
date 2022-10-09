@@ -1,6 +1,5 @@
 package com.sojka.employeemanager.employee.controller;
 
-import com.sojka.employeemanager.employee.domain.Education;
 import com.sojka.employeemanager.employee.domain.service.EducationService;
 import com.sojka.employeemanager.employee.dto.EducationDto;
 import lombok.AllArgsConstructor;
