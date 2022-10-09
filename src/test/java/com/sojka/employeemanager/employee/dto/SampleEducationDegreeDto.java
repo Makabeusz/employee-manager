@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.employee.dto;
 
+import com.sojka.employeemanager.employee.domain.Education;
 import com.sojka.employeemanager.employee.utils.EducationMapper;
 
 public interface SampleEducationDegreeDto extends SampleEducationDegree{
@@ -18,6 +19,10 @@ public interface SampleEducationDegreeDto extends SampleEducationDegree{
 
     default EducationDto newSecondEmployeeEducationDto() {
         return EducationMapper.toEducationDto(newSecondEmployeeBachelorEducation());
+    }
+
+    default EducationDto wronglyAddedThirdEmployeeDegreeDto() {
+        return EducationMapper.toEducationDto(wronglyAddedThirdEmployeeDegree());
     }
 
 }

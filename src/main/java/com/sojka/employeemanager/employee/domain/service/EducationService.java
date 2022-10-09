@@ -11,4 +11,6 @@ public interface EducationService {
     EducationDto getEmployeeMostRecentDegree(String number);
 
     EducationDto addEmployeeDegree(EducationDto educationDto);
+
+    void deleteEmployeeDegree(EducationDto educationDto);
 }

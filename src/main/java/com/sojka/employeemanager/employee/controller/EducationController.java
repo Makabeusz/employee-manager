@@ -1,10 +1,12 @@
 package com.sojka.employeemanager.employee.controller;
 
+import com.sojka.employeemanager.employee.domain.Education;
 import com.sojka.employeemanager.employee.domain.service.EducationService;
 import com.sojka.employeemanager.employee.dto.EducationDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +36,13 @@ public class EducationController {
     @PostMapping
     public ResponseEntity<EducationDto> addNewDegree(@PathVariable("employee-id") String id, @RequestBody EducationDto educationDto) {
         return new ResponseEntity<>(service.addEmployeeDegree(educationDto), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteDegree(@PathVariable("employee-id") String id, @RequestBody EducationDto educationDto) {
+        service.deleteEmployeeDegree(educationDto);
+        String message = "Employee with id " + id + " removed the degree: " + educationDto.toString();
+        return ResponseEntity.ok(message);
     }
 
 }

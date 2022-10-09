@@ -40,4 +40,9 @@ public class EducationServiceImpl implements EducationService {
         Education saved = repository.save(degree);
         return EducationMapper.toEducationDto(saved);
     }
+
+    @Override
+    public void deleteEmployeeDegree(EducationDto educationDto) {
+        // TODO: Integration tests / implementation
+    }
 }

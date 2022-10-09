@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,9 +49,11 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    private EducationService service;
 
     final String FIRST_EMPLOYEE_ID = "1";
-    final String EMPLOYEE_WITHOUT_DEGREE = "3";
+    final String THIRD_EMPLOYEE_WITHOUT_DEGREE = "3";
 
     @Test
     void should_return_all_employee_degrees() throws Exception {
@@ -78,7 +81,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
 
     @Test
     void should_return_204_for_employee_without_university_degree() throws Exception {
-        mockMvc.perform(get("/employees/" + EMPLOYEE_WITHOUT_DEGREE + "/education/recent"))
+        mockMvc.perform(get("/employees/" + THIRD_EMPLOYEE_WITHOUT_DEGREE + "/education/recent"))
                 .andDo(print())
                 .andExpect(noContentStatus());
     }
@@ -87,7 +90,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
     void should_correctly_save_new_degree_for_employee() throws Exception {
         String bachelorDegree = "\"degree\":\"Bachelor\"";
 
-        mockMvc.perform(post("/employees/" + EMPLOYEE_WITHOUT_DEGREE + "/education")
+        mockMvc.perform(post("/employees/" + THIRD_EMPLOYEE_WITHOUT_DEGREE + "/education")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bachelorDegree()))
                 .andDo(print())
@@ -105,6 +108,33 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                 .andDo(print())
                 .andExpect(conflictStatus())
                 .andExpect(answerContains("The employee already have such degree"));
+    }
+
+    @Test
+    void should_correctly_remove_employee_existing_degree() throws Exception {
+        String wronglyAddedEducation = mapper.writeValueAsString(wronglyAddedThirdEmployeeDegreeDto());
+        service.addEmployeeDegree(wronglyAddedThirdEmployeeDegreeDto());
+
+        mockMvc.perform(delete("/employees/" + THIRD_EMPLOYEE_WITHOUT_DEGREE + "/education")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(wronglyAddedEducation))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(answerContains("Employee with id 3 removed the degree: " + wronglyAddedThirdEmployeeDegreeDto().toString()));
+    }
+
+    @Test
+    void should_throw_NoEducationException_for_deleting_non_existing_degree_attempt() throws Exception {
+        EducationDto nonExistingDegree = wronglyAddedThirdEmployeeDegreeDto();
+        String jsonWithToBeDeletedDegree = mapper.writeValueAsString(wronglyAddedThirdEmployeeDegreeDto());
+
+        mockMvc.perform(delete("/employees/" + THIRD_EMPLOYEE_WITHOUT_DEGREE + "/education")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonWithToBeDeletedDegree))
+                .andDo(print())
+                .andExpect(conflictStatus())
+                .andExpect(answerContains("Employee degree cannot be deleted, because do not exists: "
+                        + nonExistingDegree.toString()));
     }
 
     private String bachelorDegree() throws JsonProcessingException {
@@ -155,6 +185,14 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                     }
                     return EducationMapper.toEducationDto(
                             repository.saveObject(education));
+                }
+
+                @Override
+                public void deleteEmployeeDegree(EducationDto educationDto) {
+                    Education education = EducationMapper.toEducation(educationDto);
+                    if (!repository.exists(education.getObjectId()))
+                        throw new NoEducationException(educationDto.toString());
+                    repository.remove(education.getObjectId());
                 }
             };
         }

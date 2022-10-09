@@ -25,9 +25,10 @@ public class EducationControllerErrorHandler {
 
     @ExceptionHandler(NoEducationException.class)
     ResponseEntity<EmployeeErrorResponse> handleNoEducationException(NoEducationException e) {
-        String message = "The employee with ID " + e.getMessage() + " have no university degree.";
-        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        String message = "Employee degree cannot be deleted, because do not exists: " + e.getMessage();
+        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.CONFLICT);
+        log.warn(message);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
 }
