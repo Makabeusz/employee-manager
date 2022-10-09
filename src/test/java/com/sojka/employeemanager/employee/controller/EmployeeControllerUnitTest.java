@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.employee.domain.Employee;
+import com.sojka.employeemanager.employee.dto.EducationDto;
 import com.sojka.employeemanager.employee.utils.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.handler.EmployeeControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
@@ -36,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,6 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -169,6 +172,33 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 .andExpect(content().string(Matchers.containsString(validationMessage)));
     }
 
+    @Test
+    void should_correctly_remove_employee_existing_degree() throws Exception {
+        String wronglyAddedEmployee = mapper.writeValueAsString(wrongEmployeeDto());
+        String wronglyAddedEmployeeId = "5";
+        service.addEmployee(wrongEmployeeDto());
+
+        mockMvc.perform(delete("/employees/" + wronglyAddedEmployeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(wronglyAddedEmployee))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(answerContains("The employee with id 5 has been removed."));
+    }
+
+    @Test
+    void should_throw_EmployeeNotFoundException_for_deleting_non_existing_degree_attempt() throws Exception {
+        String nonExistingEmployeeJson = mapper.writeValueAsString(wrongEmployeeDto());
+        String wronglyAddedEmployeeId = "5";
+
+        mockMvc.perform(delete("/employees/" + wronglyAddedEmployeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(nonExistingEmployeeJson))
+                .andDo(print())
+                .andExpect(notFoundStatus())
+                .andExpect(answerContains("Employee with id 5 do not exist."));
+    }
+
     private static Stream<Arguments> malformedEmployees() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Employee wellConstructedEmployee = Employee.builder()
@@ -246,6 +276,12 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                     return repository.saveAllObjects(employees).stream()
                             .map(EmployeeMapper::toEmployeeDto)
                             .collect(Collectors.toList());
+                }
+
+                @Override
+                public void deleteEmployee(String id) {
+                    Employee employee = repository.findObject(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+                    repository.remove(employee.getObjectId());
                 }
             };
         }

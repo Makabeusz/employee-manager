@@ -132,7 +132,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonWithToBeDeletedDegree))
                 .andDo(print())
-                .andExpect(conflictStatus())
+                .andExpect(notFoundStatus())
                 .andExpect(answerContains("Employee degree cannot be deleted, because do not exists: "
                         + nonExistingDegree.toString()));
     }

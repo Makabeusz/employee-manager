@@ -27,4 +27,8 @@ public interface SampleEmployeeDto extends SampleEmployee {
                 EmployeeMapper.toEmployeeDto(hank()),
                 EmployeeMapper.toEmployeeDto(luize()));
     }
+
+    default EmployeeDto wrongEmployeeDto() {
+        return EmployeeMapper.toEmployeeDto(wrongEmployee());
+    }
 }

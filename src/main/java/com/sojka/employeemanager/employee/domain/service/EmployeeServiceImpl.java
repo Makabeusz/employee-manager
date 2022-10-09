@@ -56,4 +56,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(EmployeeMapper::toEmployeeDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteEmployee(String id) {
+        // TODO: integration tests / implementation
+    }
 }

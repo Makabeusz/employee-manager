@@ -5,6 +5,7 @@ import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,13 @@ public class EmployeeController {
     @PostMapping("/list")
     public ResponseEntity<List<EmployeeDto>> addEmployees(@RequestBody @Valid List<EmployeeDto> employees) {
         return new ResponseEntity<>(service.addEmployees(employees), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable("id") String id) {
+        service.deleteEmployee(id);
+        String message = "The employee with id " + id + " has been removed.";
+        return ResponseEntity.ok(message);
     }
 
 }

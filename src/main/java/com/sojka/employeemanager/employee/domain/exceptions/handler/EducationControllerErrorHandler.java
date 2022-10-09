@@ -26,9 +26,9 @@ public class EducationControllerErrorHandler {
     @ExceptionHandler(NoEducationException.class)
     ResponseEntity<EmployeeErrorResponse> handleNoEducationException(NoEducationException e) {
         String message = "Employee degree cannot be deleted, because do not exists: " + e.getMessage();
-        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.CONFLICT);
+        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.NOT_FOUND);
         log.warn(message);
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

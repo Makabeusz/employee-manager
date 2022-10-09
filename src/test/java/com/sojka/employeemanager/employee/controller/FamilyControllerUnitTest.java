@@ -181,7 +181,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonWithFamilyMemberDto))
                 .andDo(print())
-                .andExpect(conflictStatus())
+                .andExpect(notFoundStatus())
                 .andExpect(answerContains("The family member cannot be deleted, because do not exists: "
                         + nonExistingFamilyMember.toString()));
     }

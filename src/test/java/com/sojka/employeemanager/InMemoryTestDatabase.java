@@ -62,8 +62,10 @@ public class InMemoryTestDatabase<T extends DomainObject> implements SampleEmplo
     public void remove(String objectId) {
         int key = 100;
         for (Map.Entry<Integer, T> entry : objects.entrySet()) {
-            if (entry.getValue().getObjectId().equals(objectId))
+            if (entry.getValue().getObjectId().equals(objectId)) {
                 key = entry.getKey();
+                break;
+            }
         }
         if (key != 100)
             objects.remove(key);

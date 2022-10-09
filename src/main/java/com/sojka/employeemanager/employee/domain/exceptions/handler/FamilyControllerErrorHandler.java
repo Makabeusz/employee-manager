@@ -26,9 +26,9 @@ public class FamilyControllerErrorHandler {
     @ExceptionHandler(NoFamilyException.class)
     ResponseEntity<EmployeeErrorResponse> handleNoFamilyException(NoFamilyException e) {
         String message = "The family member cannot be deleted, because do not exists: " + e.getMessage();
-        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.CONFLICT);
+        EmployeeErrorResponse response = new EmployeeErrorResponse(message, HttpStatus.NOT_FOUND);
         log.warn(message);
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 

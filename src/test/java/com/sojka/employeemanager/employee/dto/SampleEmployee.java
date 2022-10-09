@@ -50,6 +50,17 @@ public interface SampleEmployee {
                 .build();
     }
 
+    default Employee wrongEmployee() {
+        return Employee.builder()
+                .id("5")
+                .firstName("Ali")
+                .secondName(null)
+                .lastName("El Asayed")
+                .birthDate("1984-03-08")
+                .personalId("84030863579")
+                .build();
+    }
+
     default List<Employee> newEmployees() {
         return List.of(john(), hank(), luize());
     }
