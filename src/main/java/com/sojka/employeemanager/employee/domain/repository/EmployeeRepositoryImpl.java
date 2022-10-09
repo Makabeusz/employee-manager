@@ -33,7 +33,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     @Override
     public Optional<Employee> findEmployeeById(String number) {
         String sql = "SELECT * " +
-                "FROM employees\n" +
+                "FROM employees " +
                 "WHERE id = ?";
         List<Employee> employee = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),
@@ -43,7 +43,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public Employee save(Employee employee) {
-        String sql = "INSERT INTO employees (first_name, second_name, last_name, birth_date, personal_id)\n" +
+        String sql = "INSERT INTO employees (first_name, second_name, last_name, birth_date, personal_id) " +
                 "VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, employee.getFirstName(),
                 employee.getSecondName(),
@@ -57,7 +57,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     @Override
     public Optional<Employee> findEmployeeByPersonalId(String personalId) {
         String sql = "SELECT * " +
-                "FROM employees\n" +
+                "FROM employees " +
                 "WHERE personal_id = ?";
         List<Employee> employee = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),
@@ -77,10 +77,10 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public boolean exists(Employee employee) {
-        String sql = "SELECT CASE WHEN EXISTS (" +
-                "SELECT * FROM employees\n" +
-                "WHERE personal_id = ?)\n" +
-                "THEN true ELSE false END AS boolean";
+        String sql = "SELECT IF( EXISTS(" +
+                "SELECT * FROM employees " +
+                "WHERE personal_id = ?), " +
+                "true, false) AS boolean";
         return 1 == jdbcTemplate.queryForObject(sql,
                 (rs, rowNum) -> rs.getInt("boolean"),
                 employee.getPersonalId());

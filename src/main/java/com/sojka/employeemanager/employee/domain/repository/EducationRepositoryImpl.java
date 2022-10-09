@@ -58,16 +58,16 @@ public class EducationRepositoryImpl implements EducationRepository {
 
     @Override
     public boolean exists(Education education) {
-        String sql = "SELECT CASE WHEN EXISTS (SELECT * " +
+        String sql = "SELECT IF( EXISTS( " +
+                "SELECT * " +
                 "FROM education " +
                 "WHERE id = ? " +
                 "AND degree = ? " +
                 "AND school_name = ? " +
                 "AND address = ? " +
                 "AND start_date = ? " +
-                "AND finish_date = ?) " +
-                "THEN true " +
-                "ELSE false END AS 'boolean'";
+                "AND finish_date = ?), " +
+                "true, false) AS boolean";
         return 1 == jdbcTemplate.queryForObject(sql,
                 (rs, rowNum) -> rs.getInt("boolean"),
                 education.getId(),

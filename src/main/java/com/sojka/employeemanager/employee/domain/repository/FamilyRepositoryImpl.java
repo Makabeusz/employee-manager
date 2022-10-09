@@ -76,14 +76,14 @@ public class FamilyRepositoryImpl implements FamilyRepository {
 
     @Override
     public boolean exists(Family familyMember) {
-        String sql = "SELECT CASE WHEN EXISTS (" +
+        String sql = "SELECT IF( EXISTS (" +
                 "SELECT * FROM family " +
                 "WHERE id = ? " +
                 "AND first_name = ? " +
                 "AND last_name = ? " +
                 "AND birth_date = ? " +
-                "AND kinship = ? )" +
-                "THEN true ELSE false END AS boolean";
+                "AND kinship = ? )," +
+                " true, false ) AS boolean";
         return 1 == jdbcTemplate.queryForObject(sql,
                 (rs, rowNum) -> rs.getInt("boolean"),
                 familyMember.getId(),
