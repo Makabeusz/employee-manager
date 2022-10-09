@@ -173,7 +173,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                             .collect(Collectors.toList()).stream()
                             .min((e1, e2) -> (LocalDate.parse(e2.getFinishDate()).isAfter(LocalDate.parse(e1.getFinishDate()))) ? 1 : 0);
                     return EducationMapper.toEducationDto(
-                            lastDegree.orElseThrow(() -> new NoEducationException(number)));
+                            lastDegree.orElse(Education.builder().id(number).degree("No degree").build()));
                 }
 
                 @Override

@@ -30,7 +30,14 @@ public class EducationController {
 
     @GetMapping("/recent")
     public ResponseEntity<EducationDto> getMostRecentDegree(@PathVariable("employee-id") String id) {
-        return ResponseEntity.ok(service.getEmployeeMostRecentDegree(id));
+        HttpStatus status;
+        EducationDto degree = service.getEmployeeMostRecentDegree(id);
+        if (degree.getDegree().equals("No degree")) {
+            status = HttpStatus.NO_CONTENT;
+        } else {
+            status = HttpStatus.OK;
+        }
+        return new ResponseEntity<>(service.getEmployeeMostRecentDegree(id), status);
     }
 
     @PostMapping
