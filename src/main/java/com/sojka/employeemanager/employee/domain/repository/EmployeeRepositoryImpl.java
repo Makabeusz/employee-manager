@@ -1,6 +1,7 @@
 package com.sojka.employeemanager.employee.domain.repository;
 
 import com.sojka.employeemanager.employee.domain.Employee;
+import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,10 +35,10 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
         String sql = "SELECT * " +
                 "FROM employees\n" +
                 "WHERE id = ?";
-        Employee employee = jdbcTemplate.queryForObject(sql,
+        List<Employee> employee = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Employee.class),
                 number);
-        return Optional.ofNullable(employee);
+        return employee.isEmpty() ? Optional.empty() : Optional.of(employee.get(0));
     }
 
     @Override
@@ -49,7 +50,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 employee.getLastName(),
                 employee.getBirthDate(),
                 employee.getPersonalId());
-        return findEmployeeByPersonalId(employee.getPersonalId()).get();
+        return findEmployeeByPersonalId(employee.getPersonalId())
+                .orElseThrow(() -> new EmployeeNotFoundException(employee.getId()));
     }
 
     @Override
@@ -82,5 +84,12 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
         return 1 == jdbcTemplate.queryForObject(sql,
                 (rs, rowNum) -> rs.getInt("boolean"),
                 employee.getPersonalId());
+    }
+
+    @Override
+    public void delete(String personalId) {
+        String sql = "DELETE FROM employees " +
+                "WHERE personal_id = ? ";
+        jdbcTemplate.update(sql, personalId);
     }
 }

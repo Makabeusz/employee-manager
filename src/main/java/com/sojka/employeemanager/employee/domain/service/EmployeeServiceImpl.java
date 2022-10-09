@@ -59,6 +59,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployee(String id) {
-        // TODO: integration tests / implementation
+        Employee employee = repository.findEmployeeByPersonalId(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+        repository.delete(employee.getPersonalId());
     }
 }

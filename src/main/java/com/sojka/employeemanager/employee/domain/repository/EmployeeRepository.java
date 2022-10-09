@@ -18,4 +18,6 @@ public interface EmployeeRepository {
     List<Employee> saveAll(List<Employee> employees);
 
     boolean exists(Employee employee);
+
+    void delete(String personalId);
 }
