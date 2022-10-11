@@ -40,6 +40,7 @@ CREATE TABLE `user_account` (
                                 `password` VARCHAR (200) NOT NULL,
                                 `password_salt` VARCHAR (30) NOT NULL,
                                 `password_hash_algorithm` VARCHAR(45) NOT NULL,
+                                `role` ENUM('EMPLOYEE', 'ADMIN'),
                                 FOREIGN KEY (id) REFERENCES employees(id),
                                 UNIQUE (email),
                                 UNIQUE (id)

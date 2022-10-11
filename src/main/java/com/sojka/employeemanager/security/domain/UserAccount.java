@@ -17,5 +17,5 @@ public class UserAccount {
     private String password;
     private String passwordSalt;
     private String passwordHashAlgorithm;
-
+    private String role;
 }

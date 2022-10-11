@@ -1,5 +1,7 @@
 package com.sojka.employeemanager.security.domain.service;
 
+import com.sojka.employeemanager.security.domain.UserAccount;
+import com.sojka.employeemanager.security.domain.UserMapper;
 import com.sojka.employeemanager.security.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,8 @@ public class MySqlUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        UserAccount user = repository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        return UserMapper.toUserDetails(user);
     }
 }
