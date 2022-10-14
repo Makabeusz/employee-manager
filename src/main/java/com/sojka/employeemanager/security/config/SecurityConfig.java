@@ -1,11 +1,9 @@
 package com.sojka.employeemanager.security.config;
 
+import com.sojka.employeemanager.security.jwt.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,21 +17,14 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.servlet.Filter;
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
-//    private final AuthTokenFilter tokenFilter;
+    private final AuthTokenFilter tokenFilter;
     private final AuthenticationEntryPoint authEntryPoint;
-
-    //Use a org.springframework.security.web.SecurityFilterChain
-    // Bean to configure HttpSecurity or a WebSecurityCustomizer Bean to configure WebSecurity
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -50,19 +41,11 @@ public class SecurityConfig {
         http
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint);
-//        http
-//                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        return http.build();
-    }
-    @Bean
-    @Order(SecurityProperties.BASIC_AUTH_ORDER)
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().authenticated();
-        http.formLogin();
-        http.httpBasic();
         return http.build();
     }
 
@@ -71,4 +54,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService)
+            throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(bCryptPasswordEncoder)
+                .and()
+                .build();
+    }
 }
