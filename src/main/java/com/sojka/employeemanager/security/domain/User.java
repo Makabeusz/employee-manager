@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAccount {
+public class User {
 
     private String id;
     private String username;
@@ -17,5 +19,6 @@ public class UserAccount {
     private String password;
     private String passwordSalt;
     private String passwordHashAlgorithm;
-    private String role;
+    private List<Authority> authorities;
+
 }

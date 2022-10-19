@@ -1,6 +1,6 @@
 package com.sojka.employeemanager.security.domain.repository;
 
-import com.sojka.employeemanager.security.domain.UserAccount;
+import com.sojka.employeemanager.security.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,13 +21,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<UserAccount> findUserByUsername(String username) {
+    public Optional<User> findUserByUsername(String username) {
         String sql = "SELECT * " +
                 "FROM users " +
                 "WHERE username = ?";
-        List<UserAccount> userAccount = jdbcTemplate.query(sql
-                , BeanPropertyRowMapper.newInstance(UserAccount.class),
+        List<User> user = jdbcTemplate.query(sql
+                , BeanPropertyRowMapper.newInstance(User.class),
                 username);
-        return userAccount.isEmpty() ? Optional.empty() : Optional.of(userAccount.get(0));
+        return user.isEmpty() ? Optional.empty() : Optional.of(user.get(0));
     }
 }
