@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.security.domain;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,7 +10,7 @@ public interface UserMapper {
         return User.builder()
                 .username(userAccount.getUsername())
                 .password(userAccount.getPassword())
-                .authorities(userAccount.getRole())
+                .authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))
                 .build();
     }
 }

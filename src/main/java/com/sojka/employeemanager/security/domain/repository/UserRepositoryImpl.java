@@ -23,7 +23,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<UserAccount> findUserByUsername(String username) {
         String sql = "SELECT * " +
-                "FROM user_account " +
+                "FROM users " +
                 "WHERE username = ?";
         List<UserAccount> userAccount = jdbcTemplate.query(sql
                 , BeanPropertyRowMapper.newInstance(UserAccount.class),

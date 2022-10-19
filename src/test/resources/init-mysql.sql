@@ -1,49 +1,52 @@
 DROP TABLE IF EXISTS `employees`;
 CREATE TABLE `employees` (
-                             `id` INT(11) NOT NULL AUTO_INCREMENT,
-                             `first_name` VARCHAR(45) NOT NULL,
-                             `second_name` VARCHAR(45) DEFAULT NULL,
-                             `last_name` VARCHAR(45) NOT NULL,
-                             `birth_date` DATE NOT NULL,
-                             `personal_id` VARCHAR(45) NOT NULL,
-                             PRIMARY KEY (`id`),
-                             UNIQUE (personal_id)
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `first_name` VARCHAR(45) NOT NULL,
+    `second_name` VARCHAR(45) DEFAULT NULL,
+    `last_name` VARCHAR(45) NOT NULL,
+    `birth_date` DATE NOT NULL,
+    `personal_id` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (personal_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `family`;
 CREATE TABLE `family` (
-                          `id` INT(11) NOT NULL,
-                          `first_name` VARCHAR(45) NOT NULL,
-                          `second_name` VARCHAR(45) DEFAULT NULL,
-                          `last_name` VARCHAR(45) NOT NULL,
-                          `kinship` ENUM('spouse', 'child') NOT NULL,
-                          `birth_date` DATE NOT NULL,
-                          FOREIGN KEY (id) REFERENCES employees(id)
+    `id` INT(11) NOT NULL,
+    `first_name` VARCHAR(45) NOT NULL,
+    `second_name` VARCHAR(45) DEFAULT NULL,
+    `last_name` VARCHAR(45) NOT NULL,
+    `kinship` ENUM('spouse', 'child') NOT NULL,
+    `birth_date` DATE NOT NULL,
+    FOREIGN KEY (id) REFERENCES employees(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `education`;
 CREATE TABLE `education` (
-                             `id` INT(11) NOT NULL,
-                             `degree` VARCHAR(45) NOT NULL,
-                             `school_name` VARCHAR(45) NOT NULL,
-                             `address` VARCHAR(90) DEFAULT NULL,
-                             `start_date` DATE NOT NULL,
-                             `finish_date` DATE NOT NULL,
-                             FOREIGN KEY (id) REFERENCES employees(id)
+    `id` INT(11) NOT NULL,
+    `degree` VARCHAR(45) NOT NULL,
+    `school_name` VARCHAR(45) NOT NULL,
+    `address` VARCHAR(90) DEFAULT NULL,
+    `start_date` DATE NOT NULL,
+    `finish_date` DATE NOT NULL,
+    FOREIGN KEY (id) REFERENCES employees(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `user_account`;
-CREATE TABLE `user_account` (
-                                `id` INT(11) NOT NULL,
-                                `username` VARCHAR(45) NOT NULL,
-                                `email` VARCHAR(254) NOT NULL,
-                                `password` VARCHAR (200) NOT NULL,
-                                `password_salt` VARCHAR (30) NOT NULL,
-                                `password_hash_algorithm` VARCHAR(45) NOT NULL,
-                                `role` ENUM('EMPLOYEE', 'ADMIN'),
-                                FOREIGN KEY (id) REFERENCES employees(id),
-                                UNIQUE (email),
-                                UNIQUE (id)
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+    `username` VARCHAR(50) NOT NULL PRIMARY KEY,
+    `email` VARCHAR(254) NOT NULL UNIQUE,
+    `password` VARCHAR (200) NOT NULL,
+    `password_salt` VARCHAR (30) NOT NULL,
+    `password_hash_algorithm` VARCHAR(15) NOT NULL,
+    `enabled` BOOLEAN NOT NULL DEFAULT (TRUE)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS authorities;
+CREATE TABLE authorities (
+    username VARCHAR(50) NOT NULL,
+    authority VARCHAR(50) NOT NULL,
+    CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO employees (first_name, second_name, last_name, birth_date, personal_id)
