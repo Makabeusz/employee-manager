@@ -42,7 +42,7 @@ class EducationServiceIntegrationContainerTest implements SampleEducationDegreeD
         List<EducationDto> firstEmployeeDegrees = service.getEmployeeDegrees(FIRST_EMPLOYEE_ID);
 
         assertThat(firstEmployeeDegrees)
-                .containsExactlyInAnyOrderElementsOf(firstEmployeeDegrees);
+                .containsExactlyInAnyOrderElementsOf(degrees);
     }
 
     @Test
