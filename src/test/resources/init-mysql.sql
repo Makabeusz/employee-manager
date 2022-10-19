@@ -32,21 +32,21 @@ CREATE TABLE `education` (
     FOREIGN KEY (id) REFERENCES employees(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS users;
-CREATE TABLE users (
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
     `username` VARCHAR(50) NOT NULL PRIMARY KEY,
     `email` VARCHAR(254) NOT NULL UNIQUE,
     `password` VARCHAR (200) NOT NULL,
     `password_salt` VARCHAR (30) NOT NULL,
     `password_hash_algorithm` VARCHAR(15) NOT NULL,
-    `enabled` BOOLEAN NOT NULL DEFAULT (TRUE)
+    `enabled` BOOLEAN NOT NULL DEFAULT TRUE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS authorities;
-CREATE TABLE authorities (
+DROP TABLE IF EXISTS `authorities`;
+CREATE TABLE `authorities` (
     username VARCHAR(50) NOT NULL,
     authority VARCHAR(50) NOT NULL,
-    CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)
+    FOREIGN KEY(username) REFERENCES users(username)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO employees (first_name, second_name, last_name, birth_date, personal_id)
@@ -63,3 +63,11 @@ INSERT INTO family (id, first_name, second_name, last_name, birth_date, kinship)
 VALUES ('1', 'John', 'Joshua', 'Swayze', '1980-06-12', 'child'),
        ('1', 'Jane', null, 'Swayze', '1953-06-17', 'spouse'),
        ('2', 'Mary', 'Jane', 'Wayne', '1921-12-25', 'spouse');
+
+INSERT INTO users (username, email, password, password_salt, password_hash_algorithm, enabled)
+VALUES ('admin', 'john-wick@proton.me', '$2a$12$uY6DbnZMr8HSAlDvCXvsveOUcExJWRqIDdRCdSO5j3q7omDPcWASK', 'admiDummyS4lt', 'SHA256', '1'),
+       ('user', 'hank_moore3@wp.pl', '$2a$12$dpMfEKdUkxfDDGs8O6VwMuegRxr1PDK5fZyFWuZT5t/X.5wKqN7oC', 'userDummyS4lt', 'SHA256', '1');
+
+INSERT INTO authorities (username, authority)
+VALUES ('admin', 'ROLE_ADMIN'),
+       ('user', 'ROLE_USER');

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.employee.domain.Employee;
-import com.sojka.employeemanager.employee.dto.EducationDto;
 import com.sojka.employeemanager.employee.utils.EmployeeMapper;
 import com.sojka.employeemanager.employee.domain.exceptions.handler.EmployeeControllerErrorHandler;
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeNotFoundException;
@@ -17,6 +16,8 @@ import com.sojka.employeemanager.employee.domain.service.EmployeeServiceImpl;
 import com.sojka.employeemanager.employee.dto.EmployeeDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployee;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeDto;
+import com.sojka.employeemanager.security.config.SecurityConfig;
+import com.sojka.employeemanager.security.config.SecurityTestConfigWithMockedRoles;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +38,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,43 +65,35 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
 
     @Test
     void should_return_list_of_all_employees() throws Exception {
-        // given
         final List<EmployeeDto> expectedEmployees = new ArrayList<>(Arrays.asList(firstEmployeeDto(), secondEmployeeDto(), thirdEmployeeDto()));
 
-        // when
         MvcResult result = mockMvc.perform(get("/employees"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // then
         assertThat(listBodyOf(result))
                 .containsAll(expectedEmployees);
     }
 
     @Test
     void should_return_single_existing_employee() throws Exception {
-        // given
         final EmployeeDto expectedEmployee = firstEmployeeDto();
         final String EXISTING_ID = "0";
 
-        // when
         MvcResult result = mockMvc.perform(get("/employees/" + EXISTING_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // then
         assertThat(objectBodyOf(result))
                 .isEqualTo(expectedEmployee);
     }
 
     @Test
     void should_throw_EmployeeNotFoundException_for_non_existing_employee() throws Exception {
-        // given
         final String NOT_EXISTING_ID = "100";
 
-        // when
         when(service.getEmployee(NOT_EXISTING_ID))
                 .thenThrow(new EmployeeNotFoundException(NOT_EXISTING_ID));
         MvcResult result = mockMvc.perform(get("/employees/" + NOT_EXISTING_ID))
@@ -109,7 +101,6 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 .andExpect(notFoundStatus())
                 .andReturn();
 
-        // then
         assertThat(objectBodyOf(result)).describedAs(
                 "Employee with id 100 do not exist.");
     }
@@ -159,11 +150,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
 
     @ParameterizedTest
     @MethodSource("malformedEmployees")
-    void employeeDto_validation_check(String argument, String validationMessage) throws Exception {
-        // given
-        String malformedEmployee = argument;
-
-        // when
+    void employeeDto_validation_check(String malformedEmployee, String validationMessage) throws Exception {
         mockMvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(malformedEmployee))
@@ -237,7 +224,10 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
         return mapper.readValue(content, EmployeeDto.class);
     }
 
-    @Import(MessageSourceConfig.class)
+    @Import({MessageSourceConfig.class,
+            EmployeeControllerErrorHandler.class,
+            SecurityTestConfigWithMockedRoles.class,
+            SecurityConfig.class})
     static class MockMvcConfig implements SampleEmployee {
 
         private final InMemoryTestDatabase<Employee> repository = InMemoryTestDatabase.of(firstEmployee(), secondEmployee(), thirdEmployee());

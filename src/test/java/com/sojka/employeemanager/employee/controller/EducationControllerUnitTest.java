@@ -16,6 +16,8 @@ import com.sojka.employeemanager.employee.domain.service.EducationService;
 import com.sojka.employeemanager.employee.dto.EducationDto;
 import com.sojka.employeemanager.employee.dto.SampleEducationDegree;
 import com.sojka.employeemanager.employee.dto.SampleEducationDegreeDto;
+import com.sojka.employeemanager.security.config.SecurityConfig;
+import com.sojka.employeemanager.security.config.SecurityTestConfigWithMockedRoles;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -147,7 +149,10 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
         return reader.readValue(content);
     }
 
-    @Import({MessageSourceConfig.class, EducationControllerErrorHandler.class})
+    @Import({MessageSourceConfig.class,
+            EducationControllerErrorHandler.class,
+            SecurityTestConfigWithMockedRoles.class,
+            SecurityConfig.class})
     static class MockMvcConfig implements SampleEducationDegree {
 
         private final InMemoryTestDatabase<Education> repository =

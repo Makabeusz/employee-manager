@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.sojka.employeemanager.InMemoryTestDatabase;
 import com.sojka.employeemanager.ResultMatcherHelper;
+import com.sojka.employeemanager.config.MessageSourceConfig;
 import com.sojka.employeemanager.employee.domain.Family;
 import com.sojka.employeemanager.employee.domain.exceptions.DuplicatedFamilyException;
 import com.sojka.employeemanager.employee.domain.exceptions.NoFamilyException;
@@ -15,6 +16,8 @@ import com.sojka.employeemanager.employee.dto.FamilyDto;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamily;
 import com.sojka.employeemanager.employee.dto.SampleEmployeeFamilyDto;
 import com.sojka.employeemanager.employee.utils.FamilyMapper;
+import com.sojka.employeemanager.security.config.SecurityConfig;
+import com.sojka.employeemanager.security.config.SecurityTestConfigWithMockedRoles;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -192,7 +195,10 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
         return reader.readValue(content);
     }
 
-    @Import(FamilyControllerErrorHandler.class)
+    @Import({FamilyControllerErrorHandler.class,
+            MessageSourceConfig.class,
+            SecurityTestConfigWithMockedRoles.class,
+            SecurityConfig.class})
     static class MockMvcConfig implements SampleEmployeeFamily {
 
         private final InMemoryTestDatabase<Family> repository =
