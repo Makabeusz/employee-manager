@@ -30,7 +30,8 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test:5.7.4'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.4'
     testImplementation 'org.springframework:spring-test:5.3.23'
     testImplementation "org.testcontainers:junit-jupiter:1.17.3"
     testImplementation "org.testcontainers:mysql:1.17.3"
