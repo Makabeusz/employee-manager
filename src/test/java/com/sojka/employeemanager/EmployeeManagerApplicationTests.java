@@ -8,6 +8,7 @@ class EmployeeManagerApplicationTests {
 
     @Test
     void context_loads() {
+        EmployeeManagerApplication.main(new String[0]);
     }
 
 }

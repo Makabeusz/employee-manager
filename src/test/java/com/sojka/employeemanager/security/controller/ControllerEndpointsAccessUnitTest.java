@@ -83,6 +83,30 @@ public class ControllerEndpointsAccessUnitTest {
                 .andExpect(status().isForbidden());
     }
 
+    @ParameterizedTest
+    @MethodSource("examplesOfGetEndpoints")
+    @WithUserDetails("ADMIN")
+    void admin_user_access_employee_get_resources_and_result_in_200(String url) throws Exception {
+        mockMvc.perform(get(url))
+                .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @MethodSource("examplesOfPostEndpoints")
+    @WithUserDetails("ADMIN")
+    void admin_request_post_resources_and_have_access_then_get_bad_request_code_due_to_missing_body(String url) throws Exception {
+        mockMvc.perform(post(url))
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @MethodSource("examplesOfDeleteEndpoints")
+    @WithUserDetails("ADMIN")
+    void admin_request_delete_resources_and_have_access_then_get_not_found_code_due_to_missing_body(String url) throws Exception {
+        mockMvc.perform(delete(url))
+                .andExpect(status().isNotFound());
+    }
+
     private static Stream<Arguments> examplesOfGetEndpoints() {
         return Stream.of(arguments("/employees/"),
                 arguments("/employees/1"),
