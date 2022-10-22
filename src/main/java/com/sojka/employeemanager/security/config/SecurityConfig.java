@@ -37,12 +37,12 @@ public class SecurityConfig {
                 .csrf().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/login/**")
-                .permitAll()
-                .antMatchers(HttpMethod.GET, "/employees/**")
-                .hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/employees/**")
-                .hasRole("ADMIN");
+                .antMatchers(HttpMethod.GET, "/employees/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/employees/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/employees/**").hasRole("ADMIN")
+                .antMatchers("/login/**").permitAll()
+                .anyRequest()
+                .authenticated();
         http
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint);

@@ -12,10 +12,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.stream.Stream;
 
@@ -28,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ContextConfiguration(classes = ControllerEndpointsAccessUnitTest.MockMvcConfig.class)
+@Testcontainers
+@ActiveProfiles("container")
 public class ControllerEndpointsAccessUnitTest {
 
     @Autowired
@@ -94,7 +98,7 @@ public class ControllerEndpointsAccessUnitTest {
     @ParameterizedTest
     @MethodSource("examplesOfPostEndpoints")
     @WithUserDetails("ADMIN")
-    void admin_request_post_resources_and_have_access_then_get_bad_request_code_due_to_missing_body(String url) throws Exception {
+    void admin_request_post_resources_and_have_access_then_get_400_code_due_to_missing_body(String url) throws Exception {
         mockMvc.perform(post(url))
                 .andExpect(status().isBadRequest());
     }
@@ -102,8 +106,10 @@ public class ControllerEndpointsAccessUnitTest {
     @ParameterizedTest
     @MethodSource("examplesOfDeleteEndpoints")
     @WithUserDetails("ADMIN")
-    void admin_request_delete_resources_and_have_access_then_get_not_found_code_due_to_missing_body(String url) throws Exception {
-        mockMvc.perform(delete(url))
+    void admin_request_delete_resources_and_have_access_then_get_404_code_due_to_false_body(String url) throws Exception {
+        mockMvc.perform(delete(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":777}"))
                 .andExpect(status().isNotFound());
     }
 
