@@ -1,8 +1,8 @@
 package com.sojka.employeemanager.security.domain.service;
 
-import com.sojka.employeemanager.security.dto.RegistrationRequestDto;
+import com.sojka.employeemanager.security.dto.UserRegistrationDto;
 
 public interface UserService {
 
-    RegistrationRequestDto addNewUser(RegistrationRequestDto registrationRequest);
+    UserRegistrationDto addNewUser(UserRegistrationDto registrationRequest);
 }

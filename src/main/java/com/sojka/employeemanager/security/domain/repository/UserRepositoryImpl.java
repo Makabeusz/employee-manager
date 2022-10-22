@@ -25,8 +25,8 @@ public class UserRepositoryImpl implements UserRepository {
         String sql = "SELECT * " +
                 "FROM users " +
                 "WHERE username = ?";
-        List<User> user = jdbcTemplate.query(sql
-                , BeanPropertyRowMapper.newInstance(User.class),
+        List<User> user = jdbcTemplate.query(sql,
+                BeanPropertyRowMapper.newInstance(User.class),
                 username);
         return user.isEmpty() ? Optional.empty() : Optional.of(user.get(0));
     }
@@ -34,5 +34,17 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> createNewUser(User user) {
         return Optional.empty();
+    }
+
+    @Override
+    public boolean exists(String username) {
+        String sql = "SELECT IF( EXISTS( " +
+                "SELECT * " +
+                "FROM users " +
+                "WHERE username = ? ), " +
+                "true, false) AS boolean";
+        return 1 == jdbcTemplate.queryForObject(sql,
+                (rs, rowNum) -> rs.getInt("boolean"),
+                username);
     }
 }

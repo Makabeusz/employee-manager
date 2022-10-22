@@ -1,10 +1,12 @@
 package com.sojka.employeemanager.security.domain.service;
 
+import com.sojka.employeemanager.security.domain.Authority;
 import com.sojka.employeemanager.security.domain.User;
 import com.sojka.employeemanager.security.domain.UserMapper;
+import com.sojka.employeemanager.security.domain.exception.DuplicatedUserException;
 import com.sojka.employeemanager.security.domain.repository.AuthorityRepository;
 import com.sojka.employeemanager.security.domain.repository.UserRepository;
-import com.sojka.employeemanager.security.dto.RegistrationRequestDto;
+import com.sojka.employeemanager.security.dto.UserRegistrationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,8 +29,36 @@ public class MySqlUserDetailsService implements UserDetailsService, UserService 
     }
 
     @Override
-    public RegistrationRequestDto addNewUser(RegistrationRequestDto registrationRequestDto) {
-        User user = new User();
-        return null;
+    public UserRegistrationDto addNewUser(UserRegistrationDto userRegistrationDto) {
+        if (!userRepository.exists(userRegistrationDto.getPersonalId())) {
+            throw new DuplicatedUserException(userRegistrationDto.toString());
+        }
+        String password = "randomPass";
+        String passwordSalt = "randomSalt";
+        String passwordHash = "SHA256";
+        boolean enabled = false;
+
+        User user = User.builder()
+                .username(userRegistrationDto.getPersonalId())
+                .email(userRegistrationDto.getEmail())
+                .password(password)
+                .passwordSalt(passwordSalt)
+                .passwordHashAlgorithm(passwordHash)
+                .enabled(enabled)
+                .build();
+
+        userRepository.createNewUser(user);
+        authorityRepository.addUserAuthority(basicUserAuthority(user));
+
+        User saved = userRepository.findUserByUsername(userRegistrationDto.getPersonalId())
+                .orElseThrow(() -> new UsernameNotFoundException(userRegistrationDto.getPersonalId()));
+        return UserMapper.toRegistrationDto(saved);
+    }
+
+    private Authority basicUserAuthority(User user) {
+        return Authority.builder()
+                .username(user.getUsername())
+                .authority("ROLE_USER")
+                .build();
     }
 }

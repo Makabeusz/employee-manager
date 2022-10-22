@@ -1,7 +1,7 @@
 package com.sojka.employeemanager.security.controller;
 
 import com.sojka.employeemanager.security.domain.service.MySqlUserDetailsService;
-import com.sojka.employeemanager.security.dto.RegistrationRequestDto;
+import com.sojka.employeemanager.security.dto.UserRegistrationDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class RegistrationController {
     private MySqlUserDetailsService service;
 
     @PostMapping
-    public ResponseEntity<RegistrationRequestDto> registerNewAccount(@RequestBody @Valid RegistrationRequestDto registrationRequest) {
+    public ResponseEntity<UserRegistrationDto> registerNewAccount(@RequestBody @Valid UserRegistrationDto registrationRequest) {
         return ResponseEntity.ok(service.addNewUser(registrationRequest));
     }
 

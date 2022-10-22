@@ -9,4 +9,6 @@ public interface UserRepository {
     Optional<User> findUserByUsername(String username);
 
     Optional<User> createNewUser(User user);
+
+    boolean exists(String username);
 }
