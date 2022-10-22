@@ -30,4 +30,9 @@ public class UserRepositoryImpl implements UserRepository {
                 username);
         return user.isEmpty() ? Optional.empty() : Optional.of(user.get(0));
     }
+
+    @Override
+    public Optional<User> createNewUser(User user) {
+        return Optional.empty();
+    }
 }

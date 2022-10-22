@@ -27,7 +27,8 @@ public class MySqlUserDetailsService implements UserDetailsService, UserService 
     }
 
     @Override
-    public RegistrationRequestDto addNewUser(RegistrationRequestDto registrationRequest) {
+    public RegistrationRequestDto addNewUser(RegistrationRequestDto registrationRequestDto) {
+        User user = new User();
         return null;
     }
 }

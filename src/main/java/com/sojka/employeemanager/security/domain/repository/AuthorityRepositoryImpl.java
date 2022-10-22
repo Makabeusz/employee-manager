@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class AuthorityRepositoryImpl implements AuthorityRepository {
@@ -27,5 +28,10 @@ public class AuthorityRepositoryImpl implements AuthorityRepository {
         return jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(Authority.class),
                 username);
+    }
+
+    @Override
+    public Optional<Authority> addUserAuthority(Authority authority) {
+        return Optional.empty();
     }
 }
