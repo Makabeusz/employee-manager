@@ -244,7 +244,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
 
                 @Override
                 public EmployeeDto getEmployee(String number) {
-                    Employee employee = repository.findObject(number)
+                    Employee employee = repository.findObjectById(number)
                             .orElseThrow(() -> new EmployeeNotFoundException(number));
                     return EmployeeMapper.toEmployeeDto(employee);
                 }
@@ -270,7 +270,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
 
                 @Override
                 public void deleteEmployee(String id) {
-                    Employee employee = repository.findObject(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+                    Employee employee = repository.findObjectById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
                     repository.remove(employee.getObjectId());
                 }
             };

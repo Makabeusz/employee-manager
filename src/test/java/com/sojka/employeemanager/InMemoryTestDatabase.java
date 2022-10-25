@@ -30,7 +30,7 @@ public class InMemoryTestDatabase<T extends DomainObject> implements SampleEmplo
         return List.copyOf(objects.values());
     }
 
-    public Optional<T> findObject(String number) {
+    public Optional<T> findObjectById(String number) {
         return Optional.ofNullable(objects.get(Integer.parseInt(number)));
     }
 

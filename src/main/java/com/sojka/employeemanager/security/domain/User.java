@@ -1,5 +1,6 @@
 package com.sojka.employeemanager.security.domain;
 
+import com.sojka.employeemanager.employee.domain.DomainObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements DomainObject {
 
     private String username;
     private String email;
@@ -20,4 +21,9 @@ public class User {
     private String passwordHashAlgorithm;
     private List<Authority> authorities;
     private boolean enabled;
+
+    @Override
+    public String getObjectId() {
+        return username;
+    }
 }

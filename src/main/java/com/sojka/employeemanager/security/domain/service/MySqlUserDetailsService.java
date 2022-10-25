@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MySqlUserDetailsService implements UserDetailsService, UserService {
+public class MySqlUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
@@ -28,9 +28,8 @@ public class MySqlUserDetailsService implements UserDetailsService, UserService 
         return UserMapper.toUserDetails(user);
     }
 
-    @Override
     public UserRegistrationDto addNewUser(UserRegistrationDto userRegistrationDto) {
-        if (!userRepository.exists(userRegistrationDto.getPersonalId())) {
+        if (userRepository.exists(userRegistrationDto.getPersonalId())) {
             throw new DuplicatedUserException(userRegistrationDto.toString());
         }
         String password = "randomPass";
