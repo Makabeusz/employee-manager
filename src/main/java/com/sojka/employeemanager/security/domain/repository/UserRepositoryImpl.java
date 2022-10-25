@@ -4,6 +4,7 @@ import com.sojka.employeemanager.security.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -24,7 +25,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findUserByUsername(String username) {
         String sql = "SELECT * " +
                 "FROM users " +
-                "WHERE username = ?";
+                "WHERE username = ? ";
         List<User> user = jdbcTemplate.query(sql,
                 BeanPropertyRowMapper.newInstance(User.class),
                 username);
@@ -32,8 +33,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> createNewUser(User user) {
-        return Optional.empty();
+    public User createNewUser(User user) {
+        String sql = "INSERT INTO users (username, email, password, password_salt, password_hash_algorithm, enabled)" +
+                "VALUE (?, ?, ?, ?, ?, ?) ";
+        jdbcTemplate.update(sql,
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getPasswordSalt(),
+                user.getPasswordHashAlgorithm(),
+                user.isEnabled());
+        return findUserByUsername(user.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User " + user.getUsername() + " have not been created."));
     }
 
     @Override
@@ -45,6 +56,14 @@ public class UserRepositoryImpl implements UserRepository {
                 "true, false) AS boolean";
         return 1 == jdbcTemplate.queryForObject(sql,
                 (rs, rowNum) -> rs.getInt("boolean"),
+                username);
+    }
+
+    @Override
+    public void deleteUserByUsername(String username) {
+        String sql = "DELETE FROM users " +
+                "WHERE username = ? ";
+        jdbcTemplate.update(sql,
                 username);
     }
 }

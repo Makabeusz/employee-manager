@@ -34,6 +34,8 @@ class RegisterNewUserIntegrationTest implements SampleUserAndAuthorities {
         service.addNewUser(newUser);
 
         assertThat(userRepository.exists(newUser.getPersonalId())).isTrue();
+        userRepository.deleteUserByUsername(newUser.getPersonalId());
+        assertThat(userRepository.exists(newUser.getPersonalId())).isFalse();
     }
 
     @Import(EmployeeManagerApplication.class)

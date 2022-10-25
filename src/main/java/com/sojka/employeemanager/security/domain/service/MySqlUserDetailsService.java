@@ -50,7 +50,7 @@ public class MySqlUserDetailsService implements UserDetailsService {
         authorityRepository.addUserAuthority(basicUserAuthority(user));
 
         User saved = userRepository.findUserByUsername(userRegistrationDto.getPersonalId())
-                .orElseThrow(() -> new UsernameNotFoundException(userRegistrationDto.getPersonalId()));
+                .orElseThrow(() -> new UsernameNotFoundException("User " + userRegistrationDto.getPersonalId() + " have not been created."));
         return UserMapper.toRegistrationDto(saved);
     }
 
