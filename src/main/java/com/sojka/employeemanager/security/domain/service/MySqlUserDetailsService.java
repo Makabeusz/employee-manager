@@ -33,16 +33,12 @@ public class MySqlUserDetailsService implements UserDetailsService {
             throw new DuplicatedUserException(userRegistrationDto.toString());
         }
         String password = "randomPass";
-        String passwordSalt = "randomSalt";
-        String passwordHash = "SHA256";
-        boolean enabled = false;
+        boolean enabled = true;
 
         User user = User.builder()
                 .username(userRegistrationDto.getPersonalId())
                 .email(userRegistrationDto.getEmail())
                 .password(password)
-                .passwordSalt(passwordSalt)
-                .passwordHashAlgorithm(passwordHash)
                 .enabled(enabled)
                 .build();
 

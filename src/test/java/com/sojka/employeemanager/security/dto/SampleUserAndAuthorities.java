@@ -10,8 +10,6 @@ public interface SampleUserAndAuthorities {
                 .username("admin")
                 .email("john-wick@proton.me")
                 .password("$2a$12$uY6DbnZMr8HSAlDvCXvsveOUcExJWRqIDdRCdSO5j3q7omDPcWASK")
-                .passwordSalt("admiDummyS4lt")
-                .passwordHashAlgorithm("SHA256")
                 .enabled(true)
                 .build();
     }
@@ -21,8 +19,6 @@ public interface SampleUserAndAuthorities {
                 .username("user")
                 .email("hank_moore3@wp.pl")
                 .password("$2a$12$dpMfEKdUkxfDDGs8O6VwMuegRxr1PDK5fZyFWuZT5t/X.5wKqN7oC")
-                .passwordSalt("userDummyS4lt")
-                .passwordHashAlgorithm("SHA256")
                 .enabled(true)
                 .build();
     }
@@ -32,8 +28,6 @@ public interface SampleUserAndAuthorities {
                 .username("newUser")
                 .email("new_guy@email.com")
                 .password("$2a$12$aufc2abKBOlkEC/rKup3m.LHn.WNtqYhKZVPA.3vZShi9GpOjUX.6")
-                .passwordSalt("newUs3rS4lt")
-                .passwordHashAlgorithm("SHA256")
                 .enabled(true)
                 .build();
     }

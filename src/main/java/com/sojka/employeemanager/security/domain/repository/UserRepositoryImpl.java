@@ -34,14 +34,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User createNewUser(User user) {
-        String sql = "INSERT INTO users (username, email, password, password_salt, password_hash_algorithm, enabled)" +
-                "VALUE (?, ?, ?, ?, ?, ?) ";
+        String sql = "INSERT INTO users (username, email, password, enabled)" +
+                "VALUE (?, ?, ?, ?) ";
         jdbcTemplate.update(sql,
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getPasswordSalt(),
-                user.getPasswordHashAlgorithm(),
                 user.isEnabled());
         return findUserByUsername(user.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User " + user.getUsername() + " have not been created."));

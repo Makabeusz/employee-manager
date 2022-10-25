@@ -17,8 +17,6 @@ public class User implements DomainObject {
     private String username;
     private String email;
     private String password;
-    private String passwordSalt;
-    private String passwordHashAlgorithm;
     private List<Authority> authorities;
     private boolean enabled;
 
