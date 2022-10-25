@@ -7,10 +7,12 @@ import com.sojka.employeemanager.security.domain.exception.DuplicatedUserExcepti
 import com.sojka.employeemanager.security.domain.repository.AuthorityRepository;
 import com.sojka.employeemanager.security.domain.repository.UserRepository;
 import com.sojka.employeemanager.security.dto.UserRegistrationDto;
+import com.sojka.employeemanager.security.utilities.PasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,7 @@ public class MySqlUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -30,15 +33,16 @@ public class MySqlUserDetailsService implements UserDetailsService {
 
     public UserRegistrationDto addNewUser(UserRegistrationDto userRegistrationDto) {
         if (userRepository.exists(userRegistrationDto.getPersonalId())) {
-            throw new DuplicatedUserException(userRegistrationDto.toString());
+            throw new DuplicatedUserException(userRegistrationDto.getPersonalId());
         }
-        String password = "randomPass";
+        String encryptedPassword = passwordEncoder.encode(
+                PasswordGenerator.randomSecurePassword());
         boolean enabled = true;
 
         User user = User.builder()
                 .username(userRegistrationDto.getPersonalId())
                 .email(userRegistrationDto.getEmail())
-                .password(password)
+                .password(encryptedPassword)
                 .enabled(enabled)
                 .build();
 
