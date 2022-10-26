@@ -11,9 +11,9 @@ import javax.validation.constraints.NotBlank;
 @RequiredArgsConstructor
 public class UserRegistrationDto {
 
-    @NotBlank
+    @NotBlank(message = "{registration.personal-id}")
     private final String personalId;
-    @NotBlank
+    @NotBlank(message = "{registration.email}")
     private final String email;
 
 }
