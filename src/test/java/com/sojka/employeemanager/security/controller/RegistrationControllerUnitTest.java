@@ -9,6 +9,7 @@ import com.sojka.employeemanager.security.domain.Authority;
 import com.sojka.employeemanager.security.domain.User;
 import com.sojka.employeemanager.security.domain.UserMapper;
 import com.sojka.employeemanager.security.domain.exception.DuplicatedUserException;
+import com.sojka.employeemanager.security.domain.exception.handler.SecurityControllersExceptionHandler;
 import com.sojka.employeemanager.security.domain.repository.AuthorityRepository;
 import com.sojka.employeemanager.security.domain.repository.UserRepository;
 import com.sojka.employeemanager.security.domain.service.MySqlUserDetailsService;
@@ -69,7 +70,8 @@ class RegistrationControllerUnitTest implements SampleUserAndAuthorities, Result
     }
 
     @Import({SecurityConfig.class,
-            SecurityTestConfigWithMockedRoles.class})
+            SecurityTestConfigWithMockedRoles.class,
+            SecurityControllersExceptionHandler.class})
     static class MockMvcConfig implements SampleUserAndAuthorities {
 
         @Autowired
