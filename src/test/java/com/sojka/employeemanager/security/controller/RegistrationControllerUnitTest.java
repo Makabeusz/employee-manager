@@ -2,6 +2,7 @@ package com.sojka.employeemanager.security.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sojka.employeemanager.InMemoryTestDatabase;
+import com.sojka.employeemanager.ResultMatcherHelper;
 import com.sojka.employeemanager.security.config.SecurityConfig;
 import com.sojka.employeemanager.security.config.SecurityTestConfigWithMockedRoles;
 import com.sojka.employeemanager.security.domain.Authority;
@@ -31,13 +32,12 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RegistrationController.class)
 @ContextConfiguration(classes = RegistrationControllerUnitTest.MockMvcConfig.class)
 @Import(RegistrationController.class)
-class RegistrationControllerUnitTest implements SampleUserAndAuthorities {
+class RegistrationControllerUnitTest implements SampleUserAndAuthorities, ResultMatcherHelper {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,7 +54,7 @@ class RegistrationControllerUnitTest implements SampleUserAndAuthorities {
                         .content(mapper.writeValueAsString(registrationDto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().string(expectedResponse));
+                .andExpect(answerContains(expectedResponse));
     }
 
     @Test

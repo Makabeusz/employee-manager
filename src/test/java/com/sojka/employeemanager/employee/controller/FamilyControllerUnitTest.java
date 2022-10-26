@@ -112,7 +112,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newChild))
                 .andDo(print())
-                .andExpect(createdStatus())
+                .andExpect(status().isCreated())
                 .andExpect(answerContains(newChild));
     }
 
@@ -125,7 +125,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(duplicate))
                 .andDo(print())
-                .andExpect(conflictStatus())
+                .andExpect(status().isConflict())
                 .andExpect(answerContains(duplicateMessage));
     }
 
@@ -184,7 +184,7 @@ class FamilyControllerUnitTest implements SampleEmployeeFamilyDto, ResultMatcher
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonWithFamilyMemberDto))
                 .andDo(print())
-                .andExpect(notFoundStatus())
+                .andExpect(status().isNotFound())
                 .andExpect(answerContains("The family member cannot be deleted, because do not exists: "
                         + nonExistingFamilyMember.toString()));
     }

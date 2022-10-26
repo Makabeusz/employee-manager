@@ -85,7 +85,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
     void should_return_204_for_employee_without_university_degree() throws Exception {
         mockMvc.perform(get("/employees/" + THIRD_EMPLOYEE_WITHOUT_DEGREE + "/education/recent"))
                 .andDo(print())
-                .andExpect(noContentStatus());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -96,7 +96,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bachelorDegree()))
                 .andDo(print())
-                .andExpect(createdStatus())
+                .andExpect(status().isCreated())
                 .andExpect(answerContains(bachelorDegree));
     }
 
@@ -108,7 +108,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(duplicatedDegree))
                 .andDo(print())
-                .andExpect(conflictStatus())
+                .andExpect(status().isConflict())
                 .andExpect(answerContains("The employee already have such degree"));
     }
 
@@ -134,7 +134,7 @@ class EducationControllerUnitTest implements SampleEducationDegreeDto, ResultMat
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonWithToBeDeletedDegree))
                 .andDo(print())
-                .andExpect(notFoundStatus())
+                .andExpect(status().isNotFound())
                 .andExpect(answerContains("Employee degree cannot be deleted, because do not exists: "
                         + nonExistingDegree.toString()));
     }

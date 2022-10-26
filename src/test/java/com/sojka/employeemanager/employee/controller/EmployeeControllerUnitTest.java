@@ -98,7 +98,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                 .thenThrow(new EmployeeNotFoundException(NOT_EXISTING_ID));
         MvcResult result = mockMvc.perform(get("/employees/" + NOT_EXISTING_ID))
                 .andDo(print())
-                .andExpect(notFoundStatus())
+                .andExpect(status().isNotFound())
                 .andReturn();
 
         assertThat(objectBodyOf(result)).describedAs(
@@ -111,7 +111,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(newEmployeeDto())))
                 .andDo(print())
-                .andExpect(createdStatus())
+                .andExpect(status().isCreated())
                 .andExpect(containsNewEmployee());
     }
 
@@ -121,7 +121,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(firstEmployeeDto())))
                 .andDo(print())
-                .andExpect(conflictStatus())
+                .andExpect(status().isConflict())
                 .andExpect(duplicateEmployeeMessage());
     }
 
@@ -131,7 +131,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(newEmployeesDto())))
                 .andDo(print())
-                .andExpect(createdStatus())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         assertThat(listBodyOf(result))
@@ -144,7 +144,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newEmployeesAndOneDuplicate()))
                 .andDo(print())
-                .andExpect(conflictStatus())
+                .andExpect(status().isConflict())
                 .andExpect(duplicateEmployeeMessage());
     }
 
@@ -155,7 +155,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(malformedEmployee))
                 .andDo(print())
-                .andExpect(badRequestStatus())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string(Matchers.containsString(validationMessage)));
     }
 
@@ -182,7 +182,7 @@ class EmployeeControllerUnitTest implements SampleEmployee, SampleEmployeeDto, R
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(nonExistingEmployeeJson))
                 .andDo(print())
-                .andExpect(notFoundStatus())
+                .andExpect(status().isNotFound())
                 .andExpect(answerContains("Employee with id 5 do not exist."));
     }
 
