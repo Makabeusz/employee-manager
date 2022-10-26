@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class InMemoryTestDatabase<T extends DomainObject> implements SampleEmployee {
+public class InMemoryTestDatabase<T extends DomainObject> {
 
     private final Map<Integer, T> objects = new HashMap<>();
 

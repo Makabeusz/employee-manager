@@ -32,6 +32,15 @@ public interface SampleUserAndAuthorities {
                 .build();
     }
 
+    default User mockedUser() {
+        return User.builder()
+                .username("mockedUser")
+                .email("mocked.user@protonmail.com")
+                .password("$2a$12$sYPSSodWt9uB6basqyxPpegFbTvtk4XpLHN.JEr.503JBJGJpqPe.")
+                .enabled(true)
+                .build();
+    }
+
     default Authority adminAuthority() {
         return Authority.builder()
                 .username("admin")
@@ -43,6 +52,13 @@ public interface SampleUserAndAuthorities {
         return Authority.builder()
                 .username("user")
                 .authority("ROLE_USER")
+                .build();
+    }
+
+    default Authority mockedUserAuthority() {
+        return Authority.builder()
+                .username("mockedUser")
+                .authority("ROLE_ADMIN")
                 .build();
     }
 
