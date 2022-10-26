@@ -29,10 +29,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@ContextConfiguration(classes = ControllerEndpointsAccessUnitTest.MockMvcConfig.class)
+@ContextConfiguration(classes = ControllerEndpointsAccessIntegrationTest.MockMvcConfig.class)
 @Testcontainers
 @ActiveProfiles("container")
-public class ControllerEndpointsAccessUnitTest {
+public class ControllerEndpointsAccessIntegrationTest {
 
     @Autowired
     private WebApplicationContext context;
@@ -111,6 +111,20 @@ public class ControllerEndpointsAccessUnitTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\":777}"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithUserDetails("USER")
+    void employee_try_to_access_register_feature_and_result_in_403() throws Exception {
+        mockMvc.perform(post("/registration"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithUserDetails("ADMIN")
+    void admin_access_register_feature_and_have_access_then_get_400_code_due_to_missing_body() throws Exception {
+        mockMvc.perform(post("/registration"))
+                .andExpect(status().isBadRequest());
     }
 
     private static Stream<Arguments> examplesOfGetEndpoints() {
