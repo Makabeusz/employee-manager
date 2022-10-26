@@ -13,4 +13,6 @@ public interface UserRepository {
     boolean exists(String username);
 
     void deleteUserByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

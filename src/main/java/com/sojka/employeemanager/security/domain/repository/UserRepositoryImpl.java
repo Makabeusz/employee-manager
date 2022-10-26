@@ -64,4 +64,16 @@ public class UserRepositoryImpl implements UserRepository {
         jdbcTemplate.update(sql,
                 username);
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        String sql = "SELECT IF( EXISTS(" +
+                "SELECT * " +
+                "FROM users " +
+                "WHERE email = ? ), " +
+                "true, false) AS boolean";
+        return 1 == jdbcTemplate.queryForObject(sql,
+                (rs, rowNum) -> rs.getInt("boolean"),
+                email);
+    }
 }

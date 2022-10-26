@@ -3,6 +3,7 @@ package com.sojka.employeemanager.security.domain.service;
 import com.sojka.employeemanager.security.domain.Authority;
 import com.sojka.employeemanager.security.domain.User;
 import com.sojka.employeemanager.security.domain.UserMapper;
+import com.sojka.employeemanager.security.domain.exception.DuplicatedEmailException;
 import com.sojka.employeemanager.security.domain.exception.DuplicatedUserException;
 import com.sojka.employeemanager.security.domain.repository.AuthorityRepository;
 import com.sojka.employeemanager.security.domain.repository.UserRepository;
@@ -34,6 +35,8 @@ public class MySqlUserDetailsService implements UserDetailsService {
     public UserRegistrationDto addNewUser(UserRegistrationDto userRegistrationDto) {
         if (userRepository.exists(userRegistrationDto.getPersonalId())) {
             throw new DuplicatedUserException(userRegistrationDto.getPersonalId());
+        } else if (userRepository.existsByEmail(userRegistrationDto.getEmail())) {
+            throw new DuplicatedEmailException(userRegistrationDto.getEmail());
         }
         String encryptedPassword = passwordEncoder.encode(
                 PasswordGenerator.randomSecurePassword());

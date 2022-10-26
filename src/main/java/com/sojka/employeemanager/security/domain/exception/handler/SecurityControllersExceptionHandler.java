@@ -1,7 +1,7 @@
 package com.sojka.employeemanager.security.domain.exception.handler;
 
 import com.sojka.employeemanager.employee.domain.exceptions.EmployeeErrorResponse;
-import com.sojka.employeemanager.security.domain.exception.DuplicatedUserException;
+import com.sojka.employeemanager.security.domain.exception.DuplicatedValueException;
 import com.sojka.employeemanager.security.domain.exception.SecurityErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class SecurityControllersExceptionHandler {
 
-    @ExceptionHandler(DuplicatedUserException.class)
-    ResponseEntity<SecurityErrorResponse> handleDuplicatedUserException(DuplicatedUserException e) {
+    @ExceptionHandler(DuplicatedValueException.class)
+    ResponseEntity<SecurityErrorResponse> handleDuplicatedUserException(DuplicatedValueException e) {
         SecurityErrorResponse response = new SecurityErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
         log.warn(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
@@ -24,9 +24,9 @@ public class SecurityControllersExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<SecurityErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        SecurityErrorResponse response = new SecurityErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
+        SecurityErrorResponse response = new SecurityErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         log.warn(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
